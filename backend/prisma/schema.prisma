@@ -1,0 +1,315 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============== ENUMS ==============
+
+enum EventStatus {
+  DRAFT
+  CONFIGURED
+  LIVE
+  COMPLETED
+  ARCHIVED
+}
+
+enum StageType {
+  LOBBY
+  LOBBY_CARD_GRID
+  WELCOME
+  JURY_REVEAL
+  ROUND
+  BREAK
+  KEYNOTE
+  AWARDS
+  NETWORKING
+}
+
+enum ProfileType {
+  HOST
+  JURY
+  SPEAKER
+}
+
+enum TeamStatus {
+  REGISTERED
+  APPROVED
+  PRESENTING
+  COMPLETED
+}
+
+enum AssetType {
+  BACKGROUND_IMAGE
+  BACKGROUND_VIDEO
+  LOGO
+  ANIMATION
+  AUDIO
+}
+
+enum TimerStatus {
+  IDLE
+  RUNNING
+  PAUSED
+  COMPLETED
+}
+
+// ============== MODELS ==============
+
+model Event {
+  id        String      @id @default(cuid())
+  name      String
+  date      DateTime
+  venue     String?
+  status    EventStatus @default(DRAFT)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  stages          EventStage[]
+  teams           Team[]
+  profiles        PersonProfile[]
+  scoringCriteria ScoringCriteria[]
+  liveState       LiveState?
+
+  @@map("events")
+}
+
+model EventStage {
+  id               String    @id @default(cuid())
+  eventId          String    @map("event_id")
+  title            String
+  stageType        StageType @map("stage_type")
+  orderIndex       Int       @map("order_index")
+  startTimePlanned DateTime? @map("start_time_planned")
+  durationMinutes  Int?      @map("duration_minutes")
+
+  // Flexible configuration stored as JSON
+  configuration Json @default("{}")
+  // Example configuration:
+  // {
+  //   "screenTemplate": "team_card_grid",
+  //   "showTimer": true,
+  //   "timerDuration": 900,
+  //   "autoAdvance": false,
+  //   "roundNumber": 1
+  // }
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  event  Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  assets StageScreenAsset[]
+
+  @@unique([eventId, orderIndex])
+  @@map("event_stages")
+}
+
+model StageScreenAsset {
+  id           String    @id @default(cuid())
+  stageId      String    @map("stage_id")
+  assetType    AssetType @map("asset_type")
+  url          String
+  displayOrder Int       @default(0) @map("display_order")
+  metadata     Json      @default("{}")
+  // Example metadata: { "alt": "Partner Logo", "duration": 5000 }
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  stage EventStage @relation(fields: [stageId], references: [id], onDelete: Cascade)
+
+  @@map("stage_screen_assets")
+}
+
+model Team {
+  id         String  @id @default(cuid())
+  eventId    String  @map("event_id")
+  name       String
+  university String
+  rankGlobal Int?    @map("rank_global")
+  rankBadge  String? @map("rank_badge") // e.g., "Gold", "Silver", "Platinum"
+
+  // Stats stored as JSON for flexibility
+  stats Json @default("{}")
+  // Example: { "performance": 15.2, "sharpe": 1.8, "sortino": 2.1 }
+
+  strategyTagline      String? @map("strategy_tagline")
+  strategyTearsheetUrl String? @map("strategy_tearsheet_url")
+  avatarCardImageUrl   String? @map("avatar_card_image_url")
+
+  roundAssignment   Int        @map("round_assignment") // 1, 2, or 3
+  presentationOrder Int?       @map("presentation_order") // Set during randomization
+  status            TeamStatus @default(REGISTERED)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  event   Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  members TeamMember[]
+  scores  TeamScore[]
+
+  @@unique([eventId, name])
+  @@index([eventId, roundAssignment])
+  @@map("teams")
+}
+
+model TeamMember {
+  id           String  @id @default(cuid())
+  teamId       String  @map("team_id")
+  name         String
+  photoUrl     String? @map("photo_url")
+  role         String? // e.g., "Portfolio Manager", "Risk Analyst"
+  quote        String? // Optional quote for display
+  displayOrder Int     @default(0) @map("display_order")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@map("team_members")
+}
+
+model PersonProfile {
+  id           String      @id @default(cuid())
+  eventId      String      @map("event_id")
+  name         String
+  role         String // e.g., "Co-founder, MCD Edu"
+  company      String?
+  photoUrl     String?     @map("photo_url")
+  bioShort     String?     @map("bio_short")
+  profileType  ProfileType @map("profile_type")
+  displayOrder Int         @default(0) @map("display_order")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  event    Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  scores   TeamScore[] // Only for JURY type
+  juryAuth JuryAuth? // Only for JURY type
+
+  @@map("person_profiles")
+}
+
+model ScoringCriteria {
+  id           String  @id @default(cuid())
+  eventId      String  @map("event_id")
+  name         String // e.g., "Investment Idea Quality"
+  description  String?
+  maxScore     Int     @default(10) @map("max_score")
+  weight       Float   @default(1.0) // For weighted scoring
+  displayOrder Int     @default(0) @map("display_order")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("scoring_criteria")
+}
+
+model TeamScore {
+  id     String @id @default(cuid())
+  teamId String @map("team_id")
+  juryId String @map("jury_id")
+
+  // Scores per criterion stored as JSON
+  criteriaScores Json @map("criteria_scores")
+  // Example: { "criteria_id_1": 8, "criteria_id_2": 7, "criteria_id_3": 9 }
+
+  totalScore  Float?   @map("total_score") // Computed
+  submittedAt DateTime @default(now()) @map("submitted_at")
+  isLocked    Boolean  @default(false) @map("is_locked")
+
+  // Relations
+  team Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  jury PersonProfile @relation(fields: [juryId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, juryId])
+  @@map("team_scores")
+}
+
+model JuryAuth {
+  id          String    @id @default(cuid())
+  juryId      String    @unique @map("jury_id")
+  accessCode  String    @unique @map("access_code") // 6-8 char unique code
+  accessToken String?   @map("access_token")
+  lastLoginAt DateTime? @map("last_login_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  jury PersonProfile @relation(fields: [juryId], references: [id], onDelete: Cascade)
+
+  @@map("jury_auth")
+}
+
+model LiveState {
+  id             String  @id @default(cuid())
+  eventId        String  @unique @map("event_id")
+  currentStageId String? @map("current_stage_id")
+  currentTeamId  String? @map("current_team_id")
+
+  // Timer state
+  timerState Json @default("{}") @map("timer_state")
+  // Example: {
+  //   "type": "presentation", // or "qa", "break"
+  //   "status": "running",
+  //   "durationMs": 360000,
+  //   "remainingMs": 240000,
+  //   "startedAt": "2024-...",
+  //   "pausedAt": null
+  // }
+
+  // Animation state for coordinated reveals
+  animationState Json @default("{}") @map("animation_state")
+  // Example: {
+  //   "currentAnimation": "jury_reveal",
+  //   "step": 2,
+  //   "totalSteps": 5
+  // }
+
+  // Round-specific state
+  roundState Json @default("{}") @map("round_state")
+  // Example: {
+  //   "currentRound": 1,
+  //   "teamOrder": ["team_id_1", "team_id_2", ...],
+  //   "currentTeamIndex": 0,
+  //   "teamsCompleted": ["team_id_1"]
+  // }
+
+  // Awards state
+  awardsLocked Boolean @default(false) @map("awards_locked")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("live_state")
+}
+
+// Admin users (separate from jury)
+model AdminUser {
+  id           String @id @default(cuid())
+  email        String @unique
+  passwordHash String @map("password_hash")
+  name         String
+  role         String @default("admin") // "admin" or "operator"
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("admin_users")
+}
+
