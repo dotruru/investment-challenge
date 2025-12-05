@@ -11,17 +11,20 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { LiveStateService } from '../live-state/live-state.service';
 
 interface ClientData {
   eventId: string;
   clientType: 'operator' | 'audience' | 'jury';
   juryId?: string;
+  userId?: string;
+  authenticated: boolean;
 }
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:5101', 'http://localhost:5102'],
     credentials: true,
   },
   namespace: '/event',
@@ -35,6 +38,7 @@ export class EventGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   constructor(
     private configService: ConfigService,
     private liveStateService: LiveStateService,
+    private jwtService: JwtService,
   ) {}
 
   afterInit() {
@@ -43,14 +47,47 @@ export class EventGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
   async handleConnection(client: Socket) {
     const { eventId, clientType, juryId } = client.handshake.query as Record<string, string>;
+    const token = client.handshake.auth?.token || client.handshake.query?.token as string;
     
     this.logger.log(`Client connected: ${client.id} (${clientType}) for event ${eventId}`);
+
+    let authenticated = false;
+    let userId: string | undefined;
+
+    // Operator connections require authentication
+    if (clientType === 'operator') {
+      if (!token) {
+        this.logger.warn(`Operator connection rejected - no token: ${client.id}`);
+        client.emit('error', { message: 'Authentication required for operator' });
+        client.disconnect();
+        return;
+      }
+
+      try {
+        const payload = this.jwtService.verify(token, {
+          secret: this.configService.get<string>('JWT_SECRET'),
+        });
+        authenticated = true;
+        userId = payload.sub;
+        this.logger.log(`Operator authenticated: ${client.id} (user: ${userId})`);
+      } catch (error) {
+        this.logger.warn(`Operator connection rejected - invalid token: ${client.id}`);
+        client.emit('error', { message: 'Invalid authentication token' });
+        client.disconnect();
+        return;
+      }
+    } else {
+      // Audience connections are allowed without auth (read-only)
+      authenticated = clientType === 'audience';
+    }
 
     // Store client data
     client.data = {
       eventId,
       clientType,
       juryId,
+      userId,
+      authenticated,
     } as ClientData;
 
     // Auto-join the event room if eventId is provided

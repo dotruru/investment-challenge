@@ -11,7 +11,9 @@ import { KeynoteScreen } from '../components/screens/KeynoteScreen';
 import { RoundScreen } from '../components/screens/RoundScreen';
 import { TransitionScreen } from '../components/screens/TransitionScreen';
 import { BreakScreen } from '../components/screens/BreakScreen';
+import { ScoringWaitScreen } from '../components/screens/ScoringWaitScreen';
 import { AwardsScreen } from '../components/screens/AwardsScreen';
+import { LeaderboardScreen } from '../components/screens/LeaderboardScreen';
 import { NetworkingScreen } from '../components/screens/NetworkingScreen';
 
 export function AudienceScreen() {
@@ -59,8 +61,12 @@ export function AudienceScreen() {
         return <TransitionScreen />;
       case 'BREAK':
         return <BreakScreen timer={timer} />;
+      case 'SCORING':
+        return <ScoringWaitScreen />;
       case 'AWARDS':
         return <AwardsScreen />;
+      case 'LEADERBOARD':
+        return <LeaderboardScreen />;
       case 'NETWORKING':
         return <NetworkingScreen />;
       default:

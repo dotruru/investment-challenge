@@ -10,7 +10,9 @@ export type StageType =
   | 'TEAM_TRANSITION'
   | 'BREAK'
   | 'KEYNOTE'
+  | 'SCORING'
   | 'AWARDS'
+  | 'LEADERBOARD'
   | 'NETWORKING';
 
 export type ProfileType = 'HOST' | 'JURY' | 'SPEAKER';

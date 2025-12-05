@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   Param,
+  UseGuards,
 } from '@nestjs/common';
 import { OperatorService } from './operator.service';
 import {
@@ -12,9 +13,15 @@ import {
   StartTimerDto,
   RandomizeRoundDto,
   TriggerAnimationDto,
+  SubmitScoreDto,
 } from './dto/operator.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Controller('operator/events/:eventId')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('operator', 'admin')
 export class OperatorController {
   constructor(private operatorService: OperatorService) {}
 
@@ -76,6 +83,20 @@ export class OperatorController {
   @Get('scores/status')
   getScoringStatus(@Param('eventId') eventId: string) {
     return this.operatorService.getScoringStatus(eventId);
+  }
+
+  @Get('scores')
+  getOperatorScores(@Param('eventId') eventId: string) {
+    return this.operatorService.getOperatorScores(eventId);
+  }
+
+  @Post('scores/:teamId')
+  submitOperatorScore(
+    @Param('eventId') eventId: string,
+    @Param('teamId') teamId: string,
+    @Body() dto: SubmitScoreDto,
+  ) {
+    return this.operatorService.submitOperatorScore(eventId, teamId, dto.score);
   }
 
   @Post('awards/lock')

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, Pause, RotateCcw, ChevronRight, ChevronLeft, Shuffle, Users, Radio, Clock, Layers, 
-  CheckCircle, AlertCircle, Trophy, Sparkles, UserCheck, Eye, LogOut
+  CheckCircle, AlertCircle, Trophy, Sparkles, UserCheck, Eye, LogOut, ClipboardList, Save, BarChart3
 } from 'lucide-react';
 import { useSocket } from '@/shared/hooks/useSocket';
 import { useLiveStateStore } from '@/shared/stores/liveStateStore';
@@ -10,6 +10,12 @@ import { useTimer } from '@/shared/hooks/useTimer';
 import { operatorApi, eventsApi } from '@/shared/api/client';
 import { Button } from '@/shared/components/ui/button';
 import type { EventStage, Team, PersonProfile } from '@/shared/types';
+
+interface TeamScore {
+  teamId: string;
+  score: number;
+  saved: boolean;
+}
 
 interface OperatorControlPanelProps {
   eventId: string;
@@ -31,6 +37,11 @@ export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanel
   const [jury, setJury] = useState<PersonProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [scoringStatus, setScoringStatus] = useState<any>(null);
+  
+  // Scoring panel state
+  const [showScoringPanel, setShowScoringPanel] = useState(false);
+  const [teamScores, setTeamScores] = useState<Record<string, TeamScore>>({});
+  const [savingScores, setSavingScores] = useState<Record<string, boolean>>({});
 
   // Animation states
   const animationState = state?.animationState || { step: 0, totalSteps: 0 };
@@ -46,6 +57,31 @@ export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanel
       loadScoringStatus();
     }
   }, [state?.currentTeamId, eventId]);
+
+  useEffect(() => {
+    if (showScoringPanel && eventId) {
+      loadOperatorScores();
+    }
+  }, [showScoringPanel, eventId]);
+
+  const loadOperatorScores = async () => {
+    try {
+      const scores = await operatorApi.getOperatorScores(eventId);
+      const scoreMap: Record<string, TeamScore> = {};
+      for (const team of scores) {
+        if (team.score !== null) {
+          scoreMap[team.teamId] = {
+            teamId: team.teamId,
+            score: team.score,
+            saved: true,
+          };
+        }
+      }
+      setTeamScores(scoreMap);
+    } catch (error) {
+      console.error('Failed to load operator scores:', error);
+    }
+  };
 
   const loadEventData = async () => {
     try {
@@ -175,6 +211,42 @@ export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanel
     }
   };
 
+  // Scoring Controls
+  const handleScoreChange = (teamId: string, score: number) => {
+    setTeamScores(prev => ({
+      ...prev,
+      [teamId]: { teamId, score: Math.min(100, Math.max(0, score)), saved: false }
+    }));
+  };
+
+  const handleSaveScore = async (teamId: string) => {
+    const scoreData = teamScores[teamId];
+    if (!scoreData) return;
+    
+    setSavingScores(prev => ({ ...prev, [teamId]: true }));
+    try {
+      await operatorApi.submitOperatorScore(eventId, teamId, scoreData.score);
+      setTeamScores(prev => ({
+        ...prev,
+        [teamId]: { ...prev[teamId], saved: true }
+      }));
+    } catch (error) {
+      console.error('Failed to save score:', error);
+    } finally {
+      setSavingScores(prev => ({ ...prev, [teamId]: false }));
+    }
+  };
+
+  const handleSaveAllScores = async () => {
+    const unsavedTeams = Object.values(teamScores).filter(s => !s.saved);
+    for (const score of unsavedTeams) {
+      await handleSaveScore(score.teamId);
+    }
+  };
+
+  const getScoredTeamsCount = () => {
+    return Object.values(teamScores).filter(s => s.saved).length;
+  };
 
   const getTeamsByRound = (round: number) => {
     return teams
@@ -239,7 +311,20 @@ export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanel
               }`} />
               {connectionState.isConnected ? 'Live' : 'Offline'}
             </div>
-            <a href={`http://localhost:5102/event/${eventId}`} target="_blank" rel="noopener noreferrer">
+            <Button 
+              variant={showScoringPanel ? "gold" : "outline"} 
+              size="sm" 
+              onClick={() => setShowScoringPanel(!showScoringPanel)}
+            >
+              <ClipboardList className="w-4 h-4 mr-2" />
+              Scoring
+              {getScoredTeamsCount() > 0 && (
+                <span className="ml-2 px-1.5 py-0.5 bg-green-500/20 text-green-500 rounded text-xs">
+                  {getScoredTeamsCount()}/{teams.length}
+                </span>
+              )}
+            </Button>
+            <a href={`${import.meta.env.VITE_AUDIENCE_URL || 'http://localhost:5102'}/event/${eventId}`} target="_blank" rel="noopener noreferrer">
               <Button variant="outline" size="sm">
                 <Eye className="w-4 h-4 mr-2" />
                 Audience
@@ -251,6 +336,149 @@ export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanel
           </div>
         </div>
       </header>
+
+      {/* Scoring Panel Overlay */}
+      <AnimatePresence>
+        {showScoringPanel && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm overflow-y-auto"
+          >
+            <div className="max-w-4xl mx-auto p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <ClipboardList className="w-6 h-6 text-gold-500" />
+                  <h2 className="text-2xl font-bold">Team Scoring</h2>
+                  <span className="px-2 py-1 bg-secondary rounded text-sm text-muted-foreground">
+                    {getScoredTeamsCount()}/{teams.length} scored
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="gold"
+                    onClick={handleSaveAllScores}
+                    disabled={Object.values(teamScores).every(s => s.saved)}
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    Save All
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowScoringPanel(false)}>
+                    Close
+                  </Button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {teams.map((team) => {
+                  const scoreData = teamScores[team.id];
+                  const isSaving = savingScores[team.id];
+                  const isSaved = scoreData?.saved;
+                  
+                  return (
+                    <motion.div
+                      key={team.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={`p-4 rounded-xl border ${
+                        isSaved 
+                          ? 'bg-green-500/5 border-green-500/30' 
+                          : 'bg-card border-border'
+                      }`}
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-gold-400 to-gold-600 rounded-lg flex items-center justify-center text-lg font-bold text-navy-950 flex-shrink-0">
+                          {team.name.charAt(0)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold truncate">{team.name}</h3>
+                          <p className="text-xs text-muted-foreground truncate">{team.university}</p>
+                          <p className="text-xs text-muted-foreground">Round {team.roundAssignment}</p>
+                        </div>
+                        {isSaved && (
+                          <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                        )}
+                      </div>
+                      
+                      <div className="mt-4 flex items-center gap-3">
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={scoreData?.score ?? 0}
+                          onChange={(e) => handleScoreChange(team.id, parseInt(e.target.value))}
+                          className="flex-1 h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-gold-500"
+                        />
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          value={scoreData?.score ?? ''}
+                          onChange={(e) => handleScoreChange(team.id, parseInt(e.target.value) || 0)}
+                          placeholder="0"
+                          className="w-16 px-2 py-1 text-center font-mono font-bold text-lg bg-secondary border-0 rounded"
+                        />
+                        <Button
+                          variant={isSaved ? "outline" : "gold"}
+                          size="sm"
+                          onClick={() => handleSaveScore(team.id)}
+                          disabled={isSaving || !scoreData || scoreData.score === undefined}
+                        >
+                          {isSaving ? (
+                            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                          ) : isSaved ? (
+                            <CheckCircle className="w-4 h-4" />
+                          ) : (
+                            <Save className="w-4 h-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+
+              {/* Leaderboard Preview */}
+              {getScoredTeamsCount() > 0 && (
+                <div className="mt-8 p-6 bg-card border border-border rounded-xl">
+                  <div className="flex items-center gap-2 mb-4">
+                    <BarChart3 className="w-5 h-5 text-gold-500" />
+                    <h3 className="font-semibold">Leaderboard Preview</h3>
+                  </div>
+                  <div className="space-y-2">
+                    {teams
+                      .filter(t => teamScores[t.id]?.saved)
+                      .sort((a, b) => (teamScores[b.id]?.score ?? 0) - (teamScores[a.id]?.score ?? 0))
+                      .map((team, index) => (
+                        <div
+                          key={team.id}
+                          className={`flex items-center gap-3 p-3 rounded-lg ${
+                            index === 0 ? 'bg-yellow-500/10' :
+                            index === 1 ? 'bg-gray-400/10' :
+                            index === 2 ? 'bg-orange-500/10' : 'bg-secondary/50'
+                          }`}
+                        >
+                          <span className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+                            index === 0 ? 'bg-yellow-500 text-yellow-950' :
+                            index === 1 ? 'bg-gray-400 text-gray-950' :
+                            index === 2 ? 'bg-orange-500 text-orange-950' : 'bg-secondary text-muted-foreground'
+                          }`}>
+                            {index + 1}
+                          </span>
+                          <span className="flex-1 font-medium">{team.name}</span>
+                          <span className="font-mono font-bold text-lg">
+                            {teamScores[team.id]?.score}
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="flex h-[calc(100vh-4rem)]">
         {/* Sidebar - Stage Navigation */}
@@ -639,8 +867,86 @@ export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanel
                 </motion.div>
               )}
 
+              {/* SCORING Controls */}
+              {currentStageType === 'SCORING' && (
+                <motion.div
+                  key="scoring"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="bg-card border border-border rounded-xl p-6"
+                >
+                  <div className="flex items-center gap-2 mb-4">
+                    <ClipboardList className="w-5 h-5 text-gold-500" />
+                    <h3 className="font-semibold">Score Entry</h3>
+                    <span className="ml-auto text-sm text-muted-foreground">
+                      {getScoredTeamsCount()}/{teams.length} teams scored
+                    </span>
+                  </div>
+                  
+                  <div className="text-center py-6">
+                    <p className="text-muted-foreground mb-4">
+                      The audience sees "Calculating Scores..." while you enter scores.
+                    </p>
+                    <Button
+                      variant="gold"
+                      size="lg"
+                      onClick={() => setShowScoringPanel(true)}
+                    >
+                      <ClipboardList className="w-5 h-5 mr-2" />
+                      Open Scoring Panel
+                    </Button>
+                  </div>
+
+                  {getScoredTeamsCount() === teams.length && (
+                    <div className="mt-4 p-4 bg-green-500/10 rounded-lg text-center">
+                      <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-2" />
+                      <p className="font-bold text-green-500">All teams scored!</p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Proceed to Awards when ready
+                      </p>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+
+              {/* LEADERBOARD Controls */}
+              {currentStageType === 'LEADERBOARD' && (
+                <motion.div
+                  key="leaderboard"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="bg-card border border-border rounded-xl p-6"
+                >
+                  <div className="flex items-center gap-2 mb-4">
+                    <BarChart3 className="w-5 h-5 text-gold-500" />
+                    <h3 className="font-semibold">Final Leaderboard</h3>
+                  </div>
+                  
+                  <div className="text-center py-6">
+                    <Trophy className="w-16 h-16 mx-auto mb-4 text-gold-500" />
+                    <p className="text-muted-foreground mb-2">
+                      The audience is viewing the final rankings.
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      All scores have been revealed to the audience.
+                    </p>
+                  </div>
+
+                  <div className="flex justify-center gap-3 mt-4">
+                    <Button variant="outline" onClick={handlePrevStage}>
+                      <ChevronLeft className="w-4 h-4 mr-2" /> Previous
+                    </Button>
+                    <Button variant="gold" onClick={handleNextStage}>
+                      Next <ChevronRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
+                </motion.div>
+              )}
+
               {/* Default Controls for other stages */}
-              {!['JURY_REVEAL', 'ROUND', 'AWARDS', 'BREAK'].includes(currentStageType || '') && (
+              {!['JURY_REVEAL', 'ROUND', 'AWARDS', 'BREAK', 'SCORING', 'LEADERBOARD'].includes(currentStageType || '') && (
                 <motion.div
                   key="default"
                   initial={{ opacity: 0, y: 20 }}

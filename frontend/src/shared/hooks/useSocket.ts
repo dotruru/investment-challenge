@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useLiveStateStore } from '../stores/liveStateStore';
+import { api } from '../api/client';
 
 interface UseSocketOptions {
   eventId: string;
@@ -35,7 +36,10 @@ export function useSocket({ eventId, clientType, juryId, onReconnect }: UseSocke
   } = useLiveStateStore();
 
   const connect = useCallback(() => {
-    const url = import.meta.env.VITE_WS_URL || 'http://localhost:3000';
+    const url = import.meta.env.VITE_WS_URL || import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:3000';
+
+    // Get auth token for operator connections
+    const token = clientType === 'operator' ? api.getToken() : undefined;
 
     const socket = io(`${url}/event`, {
       query: {
@@ -43,6 +47,7 @@ export function useSocket({ eventId, clientType, juryId, onReconnect }: UseSocke
         clientType,
         ...(juryId && { juryId }),
       },
+      auth: token ? { token } : undefined,
       transports: ['websocket', 'polling'],
       reconnection: true,
       reconnectionAttempts: 10,
@@ -51,7 +56,6 @@ export function useSocket({ eventId, clientType, juryId, onReconnect }: UseSocke
     });
 
     socket.on('connect', () => {
-      console.log('Socket connected');
       setConnectionState((prev) => ({
         ...prev,
         isConnected: true,
@@ -64,8 +68,7 @@ export function useSocket({ eventId, clientType, juryId, onReconnect }: UseSocke
       socket.emit('join:event', { eventId });
     });
 
-    socket.on('disconnect', (reason) => {
-      console.log('Socket disconnected:', reason);
+    socket.on('disconnect', () => {
       setConnectionState((prev) => ({
         ...prev,
         isConnected: false,
@@ -84,7 +87,6 @@ export function useSocket({ eventId, clientType, juryId, onReconnect }: UseSocke
     });
 
     socket.on('reconnect', () => {
-      console.log('Socket reconnected');
       onReconnect?.();
       socket.emit('join:event', { eventId });
     });

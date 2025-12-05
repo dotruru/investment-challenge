@@ -113,6 +113,9 @@ export const authApi = {
   registerAdmin: (data: { email: string; password: string; name: string; role?: string }) =>
     api.post<{ user: any; accessToken: string; refreshToken: string }>('/auth/admin/register', data),
   
+  loginOperator: (pin: string) =>
+    api.post<{ user: any; accessToken: string; refreshToken: string }>('/auth/operator/login', { pin }),
+  
   loginJury: (accessCode: string) =>
     api.post<{ jury: any; event: any; accessToken: string; refreshToken: string }>('/auth/jury/login', { accessCode }),
   
@@ -182,6 +185,9 @@ export const operatorApi = {
     api.post<any>(`/operator/events/${eventId}/animation/trigger`, { animation, params }),
   nextAnimationStep: (eventId: string) => api.post<any>(`/operator/events/${eventId}/animation/next`),
   getScoringStatus: (eventId: string) => api.get<any>(`/operator/events/${eventId}/scores/status`),
+  submitOperatorScore: (eventId: string, teamId: string, score: number) =>
+    api.post<any>(`/operator/events/${eventId}/scores/${teamId}`, { score }),
+  getOperatorScores: (eventId: string) => api.get<any>(`/operator/events/${eventId}/scores`),
   lockAwards: (eventId: string) => api.post<any>(`/operator/events/${eventId}/awards/lock`),
   getResults: (eventId: string) => api.get<any>(`/operator/events/${eventId}/awards/results`),
 };

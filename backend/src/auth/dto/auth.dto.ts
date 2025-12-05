@@ -37,3 +37,9 @@ export class RefreshTokenDto {
   refreshToken: string;
 }
 
+export class OperatorLoginDto {
+  @IsString()
+  @MinLength(4)
+  pin: string;
+}
+

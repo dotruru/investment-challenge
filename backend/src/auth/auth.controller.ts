@@ -1,6 +1,6 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AdminLoginDto, AdminRegisterDto, JuryLoginDto, RefreshTokenDto } from './dto/auth.dto';
+import { AdminLoginDto, AdminRegisterDto, JuryLoginDto, RefreshTokenDto, OperatorLoginDto } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -21,6 +21,12 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async refreshToken(@Body() dto: RefreshTokenDto) {
     return this.authService.refreshToken(dto.refreshToken);
+  }
+
+  @Post('operator/login')
+  @HttpCode(HttpStatus.OK)
+  async loginOperator(@Body() dto: OperatorLoginDto) {
+    return this.authService.loginOperator(dto.pin);
   }
 
   @Post('jury/login')

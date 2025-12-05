@@ -2,21 +2,29 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { OperatorControlPanel } from './pages/OperatorControlPanel';
 import { motion } from 'framer-motion';
-
-const OPERATOR_PIN = '0000';
+import { authApi, api } from '@/shared/api/client';
 
 function OperatorLogin({ onLogin }: { onLogin: () => void }) {
   const [pin, setPin] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pin === OPERATOR_PIN) {
+    setLoading(true);
+    setError('');
+    
+    try {
+      const response = await authApi.loginOperator(pin);
+      api.setToken(response.accessToken);
       localStorage.setItem('operator_authenticated', 'true');
+      localStorage.setItem('refreshToken', response.refreshToken);
       onLogin();
-    } else {
-      setError('Invalid PIN');
+    } catch (err: any) {
+      setError(err.message || 'Invalid PIN');
       setPin('');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -59,9 +67,10 @@ function OperatorLogin({ onLogin }: { onLogin: () => void }) {
 
             <button
               type="submit"
-              className="w-full py-4 bg-gradient-to-r from-mcd-500 to-cyan-500 text-white font-bold rounded-lg hover:opacity-90 transition-opacity"
+              disabled={loading}
+              className="w-full py-4 bg-gradient-to-r from-mcd-500 to-cyan-500 text-white font-bold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
             >
-              Enter
+              {loading ? 'Authenticating...' : 'Enter'}
             </button>
           </form>
         </div>
@@ -162,6 +171,8 @@ export default function App() {
   const handleLogout = () => {
     localStorage.removeItem('operator_authenticated');
     localStorage.removeItem('operator_event_id');
+    localStorage.removeItem('refreshToken');
+    api.setToken(null);
     setIsAuthenticated(false);
     setSelectedEventId(null);
     setEventValidated(false);
@@ -178,7 +189,7 @@ export default function App() {
   }
 
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Routes>
         <Route 
           path="*" 

@@ -40,3 +40,10 @@ export class TriggerAnimationDto {
   params?: Record<string, any>;
 }
 
+export class SubmitScoreDto {
+  @IsInt()
+  @Min(0)
+  @Max(100)
+  score: number;
+}
+

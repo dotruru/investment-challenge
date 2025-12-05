@@ -218,8 +218,10 @@ export class EventsService {
       { title: 'Keynote 1', stageType: 'KEYNOTE', orderIndex: 8, configuration: { speakerIndex: 0 } },
       { title: 'Round 3', stageType: 'ROUND', orderIndex: 9, configuration: { roundNumber: 3 } },
       { title: 'Keynote 2', stageType: 'KEYNOTE', orderIndex: 10, configuration: { speakerIndex: 1 } },
-      { title: 'Awards Ceremony', stageType: 'AWARDS', orderIndex: 11 },
-      { title: 'Networking', stageType: 'NETWORKING', orderIndex: 12 },
+      { title: 'Scoring', stageType: 'SCORING', orderIndex: 11 },
+      { title: 'Awards Ceremony', stageType: 'AWARDS', orderIndex: 12 },
+      { title: 'Leaderboard', stageType: 'LEADERBOARD', orderIndex: 13 },
+      { title: 'Networking', stageType: 'NETWORKING', orderIndex: 14 },
     ];
 
     await this.prisma.eventStage.createMany({

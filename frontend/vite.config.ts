@@ -11,7 +11,6 @@ export default defineConfig(({ mode }) => {
     admin: 'src/apps/admin/main.tsx',
     operator: 'src/apps/operator/main.tsx',
     audience: 'src/apps/audience/main.tsx',
-    jury: 'src/apps/jury/main.tsx',
   };
 
   // Default to admin if mode is development
@@ -30,7 +29,6 @@ export default defineConfig(({ mode }) => {
       // Each app runs on its own port
       port: mode === 'operator' ? 5101 
            : mode === 'audience' ? 5102 
-           : mode === 'jury' ? 5103 
            : 5101,
       strictPort: true,
       proxy: {

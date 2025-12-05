@@ -17,10 +17,6 @@ const loadApp = async () => {
       const audienceModule = await import('./apps/audience/App');
       App = audienceModule.default;
       break;
-    case 'jury':
-      const juryModule = await import('./apps/jury/App');
-      App = juryModule.default;
-      break;
     default:
       const defaultModule = await import('./apps/operator/App');
       App = defaultModule.default;

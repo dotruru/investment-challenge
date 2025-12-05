@@ -255,5 +255,84 @@ export class ScoringService {
 
     return { success: true, locked: true };
   }
+
+  // Operator-submitted scores (simplified single score per team)
+  async submitOperatorScore(eventId: string, teamId: string, score: number) {
+    // Check if awards are locked
+    const liveState = await this.prisma.liveState.findUnique({
+      where: { eventId },
+    });
+
+    if (liveState?.awardsLocked) {
+      throw new ForbiddenException('Results have been locked. Scoring is no longer allowed.');
+    }
+
+    // Validate score range
+    if (score < 0 || score > 100) {
+      throw new ForbiddenException('Score must be between 0 and 100');
+    }
+
+    // Check if operator score already exists for this team
+    const existingScore = await this.prisma.teamScore.findFirst({
+      where: { teamId, isOperator: true },
+    });
+
+    let teamScore;
+    if (existingScore) {
+      // Update existing score
+      teamScore = await this.prisma.teamScore.update({
+        where: { id: existingScore.id },
+        data: {
+          criteriaScores: { overall: score },
+          totalScore: score,
+          submittedAt: new Date(),
+        },
+      });
+    } else {
+      // Create new operator score
+      teamScore = await this.prisma.teamScore.create({
+        data: {
+          teamId,
+          juryId: null,
+          isOperator: true,
+          criteriaScores: { overall: score },
+          totalScore: score,
+        },
+      });
+    }
+
+    return {
+      success: true,
+      score: {
+        teamId,
+        totalScore: score,
+        submittedAt: teamScore.submittedAt,
+      },
+    };
+  }
+
+  async getOperatorScores(eventId: string) {
+    const teams = await this.prisma.team.findMany({
+      where: { eventId },
+      include: {
+        scores: {
+          where: { isOperator: true },
+        },
+      },
+    });
+
+    return teams.map((team) => {
+      const operatorScore = team.scores[0];
+      return {
+        teamId: team.id,
+        teamName: team.name,
+        university: team.university,
+        roundAssignment: team.roundAssignment,
+        score: operatorScore?.totalScore ?? null,
+        saved: !!operatorScore,
+        submittedAt: operatorScore?.submittedAt,
+      };
+    });
+  }
 }
 

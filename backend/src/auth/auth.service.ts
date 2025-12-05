@@ -111,6 +111,49 @@ export class AuthService {
     }
   }
 
+  // Operator Authentication (PIN-based)
+  async loginOperator(pin: string) {
+    const operatorPin = this.configService.get<string>('OPERATOR_PIN') || '847291';
+    
+    if (pin !== operatorPin) {
+      throw new UnauthorizedException('Invalid PIN');
+    }
+
+    // Find or use operator account
+    let user = await this.prisma.adminUser.findFirst({
+      where: { role: 'operator' },
+    });
+
+    if (!user) {
+      // Create operator user if doesn't exist
+      const passwordHash = await bcrypt.hash('operator' + operatorPin, 10);
+      user = await this.prisma.adminUser.create({
+        data: {
+          email: 'operator@system.local',
+          passwordHash,
+          name: 'Operator',
+          role: 'operator',
+        },
+      });
+    }
+
+    const tokens = await this.generateTokens({
+      sub: user.id,
+      email: user.email,
+      role: 'operator',
+      type: 'admin',
+    });
+
+    return {
+      user: {
+        id: user.id,
+        name: user.name,
+        role: user.role,
+      },
+      ...tokens,
+    };
+  }
+
   // Jury Authentication
   async loginJury(dto: JuryLoginDto) {
     const juryAuth = await this.prisma.juryAuth.findUnique({

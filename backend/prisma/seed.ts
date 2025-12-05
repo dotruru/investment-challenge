@@ -57,11 +57,13 @@ async function main() {
     { title: 'Break 1', stageType: StageType.BREAK, orderIndex: 5, configuration: { duration: 15 } },
     { title: 'Round 2', stageType: StageType.ROUND, orderIndex: 6, configuration: { roundNumber: 2 } },
     { title: 'Break 2', stageType: StageType.BREAK, orderIndex: 7, configuration: { duration: 15 } },
-    { title: 'Keynote Speaker', stageType: StageType.KEYNOTE, orderIndex: 8 },
+    { title: 'Keynote Speaker', stageType: StageType.KEYNOTE, orderIndex: 8, configuration: { speakerIndex: 0 } },
     { title: 'Round 3', stageType: StageType.ROUND, orderIndex: 9, configuration: { roundNumber: 3 } },
-    { title: 'Keynote Speaker 2', stageType: StageType.KEYNOTE, orderIndex: 10 },
-    { title: 'Awards Ceremony', stageType: StageType.AWARDS, orderIndex: 11 },
-    { title: 'Networking', stageType: StageType.NETWORKING, orderIndex: 12 },
+    { title: 'Keynote Speaker 2', stageType: StageType.KEYNOTE, orderIndex: 10, configuration: { speakerIndex: 1 } },
+    { title: 'Scoring', stageType: StageType.SCORING, orderIndex: 11 },
+    { title: 'Awards Ceremony', stageType: StageType.AWARDS, orderIndex: 12 },
+    { title: 'Leaderboard', stageType: StageType.LEADERBOARD, orderIndex: 13 },
+    { title: 'Networking', stageType: StageType.NETWORKING, orderIndex: 14 },
   ];
 
   for (const stage of stages) {

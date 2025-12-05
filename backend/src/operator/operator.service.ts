@@ -214,6 +214,23 @@ export class OperatorService {
     return this.scoringService.calculateRankings(eventId);
   }
 
+  async submitOperatorScore(eventId: string, teamId: string, score: number) {
+    // Store the score in the database (using the existing Score model or a simple approach)
+    // We'll use a simplified approach: store operator scores directly
+    const result = await this.scoringService.submitOperatorScore(eventId, teamId, score);
+    
+    return {
+      success: true,
+      teamId,
+      score,
+      result,
+    };
+  }
+
+  async getOperatorScores(eventId: string) {
+    return this.scoringService.getOperatorScores(eventId);
+  }
+
   async nextTeam(eventId: string) {
     const state = await this.liveStateService.getState(eventId);
     const { roundState, currentTeamId } = state;

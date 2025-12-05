@@ -27,7 +27,9 @@ enum StageType {
   ROUND
   BREAK
   KEYNOTE
+  SCORING
   AWARDS
+  LEADERBOARD
   NETWORKING
 }
 
@@ -219,9 +221,9 @@ model ScoringCriteria {
 }
 
 model TeamScore {
-  id     String @id @default(cuid())
-  teamId String @map("team_id")
-  juryId String @map("jury_id")
+  id     String  @id @default(cuid())
+  teamId String  @map("team_id")
+  juryId String? @map("jury_id") // Optional - null for operator scores
 
   // Scores per criterion stored as JSON
   criteriaScores Json @map("criteria_scores")
@@ -230,10 +232,11 @@ model TeamScore {
   totalScore  Float?   @map("total_score") // Computed
   submittedAt DateTime @default(now()) @map("submitted_at")
   isLocked    Boolean  @default(false) @map("is_locked")
+  isOperator  Boolean  @default(false) @map("is_operator") // True for operator-submitted scores
 
   // Relations
-  team Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  jury PersonProfile @relation(fields: [juryId], references: [id], onDelete: Cascade)
+  team Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  jury PersonProfile? @relation(fields: [juryId], references: [id], onDelete: Cascade)
 
   @@unique([teamId, juryId])
   @@map("team_scores")

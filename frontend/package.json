@@ -7,12 +7,10 @@
     "dev": "vite --mode operator",
     "dev:operator": "vite --mode operator",
     "dev:audience": "vite --mode audience",
-    "dev:jury": "vite --mode jury",
-    "dev:all": "concurrently \"npm run dev:operator\" \"npm run dev:audience\" \"npm run dev:jury\"",
+    "dev:all": "concurrently \"npm run dev:operator\" \"npm run dev:audience\"",
     "build": "tsc && vite build",
     "build:operator": "tsc && vite build --mode operator",
     "build:audience": "tsc && vite build --mode audience",
-    "build:jury": "tsc && vite build --mode jury",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
