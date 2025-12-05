@@ -24,7 +24,7 @@ interface ClientData {
 
 @WebSocketGateway({
   cors: {
-    origin: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:5101', 'http://localhost:5102'],
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:5101', 'http://localhost:5102'],
     credentials: true,
   },
   namespace: '/event',
