@@ -51,6 +51,15 @@ export class JuryController {
     return this.juryService.submitScore(juryId, teamId, dto);
   }
 
+  @Post('scores/:teamId/simple')
+  submitSimpleScore(
+    @CurrentUser('id') juryId: string,
+    @Param('teamId') teamId: string,
+    @Body() dto: { score: number },
+  ) {
+    return this.juryService.submitSimpleScore(juryId, teamId, dto.score);
+  }
+
   @Get('current')
   getCurrentTeam(@CurrentUser('id') juryId: string) {
     return this.juryService.getCurrentTeam(juryId);

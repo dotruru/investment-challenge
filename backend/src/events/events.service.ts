@@ -215,9 +215,9 @@ export class EventsService {
       { title: 'Break 1', stageType: 'BREAK', orderIndex: 5 },
       { title: 'Round 2', stageType: 'ROUND', orderIndex: 6, configuration: { roundNumber: 2 } },
       { title: 'Break 2', stageType: 'BREAK', orderIndex: 7 },
-      { title: 'Keynote 1', stageType: 'KEYNOTE', orderIndex: 8 },
+      { title: 'Keynote 1', stageType: 'KEYNOTE', orderIndex: 8, configuration: { speakerIndex: 0 } },
       { title: 'Round 3', stageType: 'ROUND', orderIndex: 9, configuration: { roundNumber: 3 } },
-      { title: 'Keynote 2', stageType: 'KEYNOTE', orderIndex: 10 },
+      { title: 'Keynote 2', stageType: 'KEYNOTE', orderIndex: 10, configuration: { speakerIndex: 1 } },
       { title: 'Awards Ceremony', stageType: 'AWARDS', orderIndex: 11 },
       { title: 'Networking', stageType: 'NETWORKING', orderIndex: 12 },
     ];

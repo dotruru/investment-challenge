@@ -1,0 +1,336 @@
+{
+  "version": "1.0",
+  "updatedAt": "2025-12-05",
+  
+  "event": {
+    "name": "UK University Investment Competition 2025",
+    "logos": {
+      "light": "/assets/DATAROOM/SPONSOR LOGOS/1. ORGANISERS  (EVERYWHERE!)/MCD - Black.png",
+      "dark": "/assets/DATAROOM/SPONSOR LOGOS/1. ORGANISERS  (EVERYWHERE!)/MCD - White.png"
+    }
+  },
+
+  "hosts": [
+    {
+      "id": "host-giorgio",
+      "name": "Giorgio Toledo",
+      "role": "Co-Founder",
+      "company": "MCD Edu",
+      "companyLogo": "/assets/DATAROOM/SPONSOR LOGOS/1. ORGANISERS  (EVERYWHERE!)/MCD - White.png",
+      "photo": "/assets/DATAROOM/SPEAKERS-HOSTS/HOSTS /Giorgio Toledo/face.jpg",
+      "bio": "Giorgio is committed to closing the gap between employers and graduates through more effective, experience-based recruitment. As part of the founding team at MCD Capital, he initially led Business Development before shifting his primary focus to MCD Edu. He holds an MSc in Management (with Distinction) from London Business School and a BSc in Economics and Politics from the University of Warwick."
+    },
+    {
+      "id": "host-luba",
+      "name": "Dr. Luba Schoenig",
+      "role": "Co-Founder",
+      "company": "UMushroom",
+      "companyLogo": "/assets/DATAROOM/SPONSOR LOGOS/1. ORGANISERS  (EVERYWHERE!)/umushroom_white.png",
+      "photo": "/assets/DATAROOM/SPEAKERS-HOSTS/HOSTS /Dr. Luba Schoenig /face.jpg",
+      "bio": "Luba holds a Master's degree in Economics from the University of Fribourg and a PhD in Quantitative Finance from the University of Zurich. After working in structured products at Lehman Brothers and Credit Suisse, she co-founded UMushroom in 2020."
+    }
+  ],
+
+  "speakers": [
+    {
+      "id": "speaker-ashley",
+      "name": "Ashley Oerth",
+      "credentials": "CFA",
+      "role": "Senior Investment Strategist",
+      "company": "Invesco",
+      "companyLogo": "/assets/DATAROOM/SPONSOR LOGOS/2. Industry Partners/Invesco_Global_Logo_White_Rev_RGB.png",
+      "photo": "/assets/DATAROOM/SPEAKERS-HOSTS/SPEAKERS/1. Ashley Oerth, CFA/face.jpg",
+      "bio": "Ashley Oerth is a Senior Investment Strategist for the Global Market Strategy team at Invesco, developing economic outlooks and investment insights.",
+      "order": 1
+    },
+    {
+      "id": "speaker-supriya",
+      "name": "Supriya Menon",
+      "role": "Managing Director, Head of Multi-Asset Strategy EMEA",
+      "company": "Wellington Management",
+      "companyLogo": "/assets/DATAROOM/SPONSOR LOGOS/2. Industry Partners/wellington management Logo.png",
+      "photo": "/assets/DATAROOM/SPEAKERS-HOSTS/SPEAKERS/2. Supriya Menon/face.jpg",
+      "bio": "Started in macro research at Morgan Stanley and Lehman Brothers, built multi-asset expertise at Aviva and Pictet. Today she works on global Solutions at Wellington.",
+      "order": 2
+    }
+  ],
+
+  "jury": [
+    {
+      "id": "jury-tom",
+      "name": "Tom Jemmett",
+      "role": "Head of Authorised Funds",
+      "company": "LGT Wealth Management",
+      "companyLogo": "/assets/DATAROOM/SPONSOR LOGOS/2. Industry Partners/LGT_WM_Logo_cmyk_white_outline.png",
+      "photo": "/assets/DATAROOM/SPEAKERS-HOSTS/JURY/Tom Jemmett/face.png",
+      "bio": "Tom is Head of Authorised Funds at LGT Wealth Management, chairing both the Authorised Collectives and Investment Trust Committees."
+    },
+    {
+      "id": "jury-christoph",
+      "name": "Christoph Pfundstein",
+      "role": "Founder",
+      "company": "Golborne Capital",
+      "companyLogo": "/assets/DATAROOM/SPONSOR LOGOS/2. Industry Partners/Golborne Capital - White.png",
+      "photo": "/assets/DATAROOM/SPEAKERS-HOSTS/JURY/Christoph Pfundstein/face.png",
+      "bio": "Christoph worked 14 years at Goldman Sachs. In 2024, he founded Goldborne Capital for asset-backed lending across Europe."
+    },
+    {
+      "id": "jury-david",
+      "name": "David Kettle",
+      "role": "Proprietary Trader",
+      "company": "Volcafe",
+      "companyLogo": "/assets/DATAROOM/SPONSOR LOGOS/2. Industry Partners/Volcafe_Landscape_01_PrimaryLogo_TREE_&_WHITE_RGB-01.png",
+      "photo": "/assets/DATAROOM/SPEAKERS-HOSTS/JURY/David Kettle/face.png",
+      "bio": "David worked at Volcafe proprietary trading for two years. Previously eight years at Marex and six at Macquarie. First class MORSE degree from Warwick."
+    }
+  ],
+
+  "teams": [
+    {
+      "id": "acsl-veterans",
+      "name": "ACSL Veterans",
+      "university": "Amsterdam",
+      "logo": null,
+      "logoPlaceholder": "A",
+      "presentation": "/assets/DATAROOM/TEAMS/1. ACSL VETERANS (Amsterdam)/ACSL Veterans Presentation Final.pdf",
+      "metrics": { "return": -6.13, "sharpe": -6.37, "volatility": 13.55, "annualised": true },
+      "members": [
+        { "name": "David Dragichi", "photo": "/assets/DATAROOM/TEAMS/1. ACSL VETERANS (Amsterdam)/David Dragichi.jpg" },
+        { "name": "Nicolae Darie-Nistor", "photo": "/assets/DATAROOM/TEAMS/1. ACSL VETERANS (Amsterdam)/Nicolae Darie-Nistor.jpg" },
+        { "name": "Robert Jacob Oros", "photo": "/assets/DATAROOM/TEAMS/1. ACSL VETERANS (Amsterdam)/Robert Jacob Oros.jpg" }
+      ]
+    },
+    {
+      "id": "dalio-lama",
+      "name": "Dalio Lama",
+      "university": "Bath",
+      "logo": "/assets/DATAROOM/TEAMS/2. DALIO LAMA (Bath)/Dalio_Lama_logo.png",
+      "presentation": "/assets/DATAROOM/TEAMS/2. DALIO LAMA (Bath)/Dalio Lama - PDF.pdf",
+      "metrics": { "return": 4.02, "sharpe": 2.17, "volatility": 32.09, "annualised": true },
+      "members": [
+        { "name": "Daksh", "photo": "/assets/DATAROOM/TEAMS/2. DALIO LAMA (Bath)/Daksh_photo.jpg" },
+        { "name": "Nag", "photo": "/assets/DATAROOM/TEAMS/2. DALIO LAMA (Bath)/Nag_photo.jpg" },
+        { "name": "Keshav Iyer", "photo": "/assets/DATAROOM/TEAMS/2. DALIO LAMA (Bath)/Keshav Iyer.png" }
+      ]
+    },
+    {
+      "id": "black-swan-capital",
+      "name": "Black Swan Capital",
+      "university": "Exeter",
+      "logo": "/assets/DATAROOM/TEAMS/3. BLACK SWAN CAPITAL (Exeter)/black swan logo.png",
+      "presentation": "/assets/DATAROOM/TEAMS/3. BLACK SWAN CAPITAL (Exeter)/Black Swan Capital Finalist Presentation.pdf",
+      "metrics": { "return": 1.90, "sharpe": null, "volatility": 0.90, "annualised": false },
+      "members": [
+        { "name": "Benji Crawford", "photo": "/assets/DATAROOM/TEAMS/3. BLACK SWAN CAPITAL (Exeter)/WhatsApp Image 2025-12-03 at 15.30.31_182630f9.jpg", "unverified": true },
+        { "name": "Robert Zhulyev", "photo": "/assets/DATAROOM/TEAMS/3. BLACK SWAN CAPITAL (Exeter)/WhatsApp Image 2025-12-03 at 16.55.55_06e17c3e.jpg", "unverified": true },
+        { "name": "Andrei Khristoliubov", "photo": "/assets/DATAROOM/TEAMS/3. BLACK SWAN CAPITAL (Exeter)/WhatsApp Image 2025-12-03 at 17.10.17_872a4821.jpg", "unverified": true }
+      ]
+    },
+    {
+      "id": "platypus-partners",
+      "name": "Platypus Partners",
+      "university": "Imperial",
+      "logo": "/assets/DATAROOM/TEAMS/4. PLATYPUS PARTNERS (Imperial)/Platypus Logo.png",
+      "presentation": "/assets/DATAROOM/TEAMS/4. PLATYPUS PARTNERS (Imperial)/Copy of Platypus Partners-4.pdf",
+      "metrics": { "return": 4.10, "sharpe": 1.46, "volatility": 21.30, "annualised": true },
+      "members": [
+        { "name": "Adam Hrehovcik", "photo": "/assets/DATAROOM/TEAMS/4. PLATYPUS PARTNERS (Imperial)/Adam Hrehovcik.JPG" },
+        { "name": "Joaquim Silva", "photo": "/assets/DATAROOM/TEAMS/4. PLATYPUS PARTNERS (Imperial)/Joaquim Silva.jpg" }
+      ]
+    },
+    {
+      "id": "hmc-capital",
+      "name": "HMC Capital",
+      "university": "King's",
+      "logo": "/assets/DATAROOM/TEAMS/5. HMC CAPITAL (King_s)/HMC Capital - Logo.png",
+      "presentation": "/assets/DATAROOM/TEAMS/5. HMC CAPITAL (King_s)/HMC Capital - PDF.pdf",
+      "metrics": { "return": 4.86, "sharpe": 4.3, "volatility": 9.14, "annualised": false },
+      "members": [
+        { "name": "Can Berk Ican", "photo": "/assets/DATAROOM/TEAMS/5. HMC CAPITAL (King_s)/Can Berk Ican.jpg" },
+        { "name": "Hugo Raffard", "photo": "/assets/DATAROOM/TEAMS/5. HMC CAPITAL (King_s)/Hugo Raffard.png" },
+        { "name": "Murathan Berk Afacan", "photo": "/assets/DATAROOM/TEAMS/5. HMC CAPITAL (King_s)/Murathan Berk Afacan.jpg" }
+      ]
+    },
+    {
+      "id": "mirage-capital",
+      "name": "Mirage Capital",
+      "university": "Lancaster",
+      "logo": "/assets/DATAROOM/TEAMS/6. MIRAGE CAPITAL (Lancaster)/Mirage Capital logo.jpeg",
+      "presentation": "/assets/DATAROOM/TEAMS/6. MIRAGE CAPITAL (Lancaster)/MIRAGE CAPITAL PORTFOLIO.pdf",
+      "metrics": { "return": null, "sharpe": 1.28, "volatility": null, "annualised": false },
+      "members": [
+        { "name": "Elsa Mhangami", "photo": "/assets/DATAROOM/TEAMS/6. MIRAGE CAPITAL (Lancaster)/Elsa Mhangami.jpg" },
+        { "name": "Maryam Jaouad", "photo": "/assets/DATAROOM/TEAMS/6. MIRAGE CAPITAL (Lancaster)/Maryam Jaouad.jpeg" },
+        { "name": "Mohammed Rayan Jaouad", "photo": "/assets/DATAROOM/TEAMS/6. MIRAGE CAPITAL (Lancaster)/Mohammed Rayan Jaouad.jpeg" }
+      ]
+    },
+    {
+      "id": "rory-tomlinson",
+      "name": "Rory Tomlinson",
+      "university": "Loughborough",
+      "logo": "/assets/DATAROOM/TEAMS/7. RORY (Loughborough)/Logo.png",
+      "presentation": "/assets/DATAROOM/TEAMS/7. RORY (Loughborough)/Rory Tomlinson - PDF.pdf",
+      "metrics": { "return": 2.88, "sharpe": 1.32, "volatility": 17.10, "annualised": true },
+      "members": [
+        { "name": "Rory Tomlinson", "photo": "/assets/DATAROOM/TEAMS/7. RORY (Loughborough)/Rory Tomlinson.jpg" }
+      ]
+    },
+    {
+      "id": "solo-yolo",
+      "name": "Solo Yolo",
+      "university": "LSE",
+      "logo": null,
+      "logoPlaceholder": "S",
+      "presentation": "/assets/DATAROOM/TEAMS/8. SOLO YOLO (LSE)/SOLO YOLO - PDF.pdf",
+      "metrics": { "return": 2.26, "sharpe": null, "volatility": 27.90, "annualised": false },
+      "members": [
+        { "name": "Thomson Chua", "photo": "/assets/DATAROOM/TEAMS/8. SOLO YOLO (LSE)/Thomson Chua.jpeg" }
+      ]
+    },
+    {
+      "id": "lockedin",
+      "name": "LockedIn",
+      "university": "Manchester",
+      "logo": "/assets/DATAROOM/TEAMS/9. LOCKEDIN (Manchester)/LockedIn Logo.jpeg",
+      "presentation": "/assets/DATAROOM/TEAMS/9. LOCKEDIN (Manchester)/LockedIn Finale Slides.pptx (2).pdf",
+      "metrics": { "return": -1.10, "sharpe": null, "volatility": null, "annualised": false },
+      "members": [
+        { "name": "Jaime Sancho", "photo": "/assets/DATAROOM/TEAMS/9. LOCKEDIN (Manchester)/Jaime Sancho.jpeg" },
+        { "name": "Sidhanth Srikanth", "photo": "/assets/DATAROOM/TEAMS/9. LOCKEDIN (Manchester)/Sidhanth Srikanth.jpeg" },
+        { "name": "Vadim Voloshin", "photo": "/assets/DATAROOM/TEAMS/9. LOCKEDIN (Manchester)/Vadim Voloshin.jpeg" }
+      ]
+    },
+    {
+      "id": "robin-hood-capital",
+      "name": "Robin Hood Capital",
+      "university": "Nottingham",
+      "logo": "/assets/DATAROOM/TEAMS/10. ROBIN HOOD CAPITAL (Nottingham)/Robin Hood Capital Logo.png",
+      "presentation": "/assets/DATAROOM/TEAMS/10. ROBIN HOOD CAPITAL (Nottingham)/Robin Hood Capital.pdf",
+      "metrics": { "return": null, "sharpe": null, "volatility": null, "annualised": false },
+      "members": [
+        { "name": "Josh Groves", "photo": "/assets/DATAROOM/TEAMS/10. ROBIN HOOD CAPITAL (Nottingham)/Josh Groves.jpeg" },
+        { "name": "Kabir Siddhu", "photo": "/assets/DATAROOM/TEAMS/10. ROBIN HOOD CAPITAL (Nottingham)/Kabir Siddhu.jpeg" },
+        { "name": "Muzamel Shah", "photo": "/assets/DATAROOM/TEAMS/10. ROBIN HOOD CAPITAL (Nottingham)/Muzamel Shah.jpeg" }
+      ]
+    },
+    {
+      "id": "canonical",
+      "name": "Canonical",
+      "university": "Queen Mary",
+      "logo": "/assets/DATAROOM/TEAMS/11. CANONICAL (Queen Mary)/canonicallogo.png",
+      "presentation": "/assets/DATAROOM/TEAMS/11. CANONICAL (Queen Mary)/CANONICAL - PDF.pdf",
+      "metrics": { "return": 2.32, "sharpe": 1.63, "volatility": 15.10, "annualised": true },
+      "members": [
+        { "name": "Jamie Jia Jing Teh", "photo": "/assets/DATAROOM/TEAMS/11. CANONICAL (Queen Mary)/Jamie Jia Jing Teh.png" },
+        { "name": "Mehmet John Evans", "photo": "/assets/DATAROOM/TEAMS/11. CANONICAL (Queen Mary)/Mehmet John Evans.png" },
+        { "name": "Shivesh Lochunah", "photo": "/assets/DATAROOM/TEAMS/11. CANONICAL (Queen Mary)/Shivesh Lochunah.png" }
+      ]
+    },
+    {
+      "id": "barestone-capital",
+      "name": "Barestone Capital",
+      "university": "SEO",
+      "logo": "/assets/DATAROOM/TEAMS/12. BARESTONE CAPITAL (SEO)/Barestone Capital Logo.png",
+      "presentation": "/assets/DATAROOM/TEAMS/12. BARESTONE CAPITAL (SEO)/Barestone Capital (2).pdf",
+      "metrics": { "return": 1.20, "sharpe": 0.44, "volatility": 12.74, "annualised": true },
+      "members": [
+        { "name": "Rohan Joseph", "photo": "/assets/DATAROOM/TEAMS/12. BARESTONE CAPITAL (SEO)/Rohan Joseph.jpg" }
+      ]
+    },
+    {
+      "id": "blackshard",
+      "name": "Blackshard",
+      "university": "UCL",
+      "logo": "/assets/DATAROOM/TEAMS/13. BLACKSHARD (UCL)/blackshard_logo.png",
+      "presentation": "/assets/DATAROOM/TEAMS/13. BLACKSHARD (UCL)/Blackshard - PDF.pdf",
+      "metrics": { "return": 3.91, "sharpe": 0.9, "volatility": 26.40, "annualised": true },
+      "members": [
+        { "name": "Aran Grant", "photo": "/assets/DATAROOM/TEAMS/13. BLACKSHARD (UCL)/Aran Grant.jpg" },
+        { "name": "Sujay Aggarwal", "photo": "/assets/DATAROOM/TEAMS/13. BLACKSHARD (UCL)/Sujay Aggarwal.jpg" },
+        { "name": "Sushant Shyam", "photo": "/assets/DATAROOM/TEAMS/13. BLACKSHARD (UCL)/Sushant Shyam.jpg" }
+      ]
+    },
+    {
+      "id": "sapiens",
+      "name": "Sapiens",
+      "university": "Warwick",
+      "logo": null,
+      "logoPlaceholder": "S",
+      "presentation": "/assets/DATAROOM/TEAMS/14. SAPIENS (Warwick)/sapiens final ppt.pdf",
+      "metrics": { "return": 0.90, "sharpe": 0.042, "volatility": 12.69, "annualised": true },
+      "members": [
+        { "name": "David Labella", "photo": "/assets/DATAROOM/TEAMS/14. SAPIENS (Warwick)/David Labella.jpg" },
+        { "name": "Manraj Singh", "photo": "/assets/DATAROOM/TEAMS/14. SAPIENS (Warwick)/Manraj Singh.JPG" },
+        { "name": "Tariq Howlader", "photo": "/assets/DATAROOM/TEAMS/14. SAPIENS (Warwick)/Tariq Howlader.jpg" }
+      ]
+    },
+    {
+      "id": "had-capital",
+      "name": "HAD Capital",
+      "university": "Independent",
+      "logo": null,
+      "logoPlaceholder": "H",
+      "presentation": "/assets/DATAROOM/TEAMS/15. HAD CAPITAL (Independent)/HAD Capital Professional Pitch Deck - Final (3).pdf",
+      "metrics": { "return": 6.50, "sharpe": 1.18, "volatility": 30.0, "annualised": true },
+      "members": [
+        { "name": "Arjun Juneja", "photo": "/assets/DATAROOM/TEAMS/15. HAD CAPITAL (Independent)/Arjun Juneja.jpeg" },
+        { "name": "Dhriti Pareek", "photo": "/assets/DATAROOM/TEAMS/15. HAD CAPITAL (Independent)/Dhriti Pareek.jpeg" },
+        { "name": "Hashim Ahmed", "photo": "/assets/DATAROOM/TEAMS/15. HAD CAPITAL (Independent)/Hashim Ahmed.jpeg" }
+      ]
+    }
+  ],
+
+  "partners": {
+    "organisers": [
+      { "name": "MCD", "logoLight": "/assets/DATAROOM/SPONSOR LOGOS/1. ORGANISERS  (EVERYWHERE!)/MCD - Black.png", "logoDark": "/assets/DATAROOM/SPONSOR LOGOS/1. ORGANISERS  (EVERYWHERE!)/MCD - White.png" },
+      { "name": "UMushroom", "logoLight": "/assets/DATAROOM/SPONSOR LOGOS/1. ORGANISERS  (EVERYWHERE!)/umushroon_black.png", "logoDark": "/assets/DATAROOM/SPONSOR LOGOS/1. ORGANISERS  (EVERYWHERE!)/umushroom_white.png" }
+    ],
+    "industry": [
+      { "name": "Golborne Capital", "logoLight": "/assets/DATAROOM/SPONSOR LOGOS/2. Industry Partners/Golborne Capital.png", "logoDark": "/assets/DATAROOM/SPONSOR LOGOS/2. Industry Partners/Golborne Capital - White.png" },
+      { "name": "Invesco", "logoLight": "/assets/DATAROOM/SPONSOR LOGOS/2. Industry Partners/Invesco_Global_Logo_Blue_Pos_RGB.png", "logoDark": "/assets/DATAROOM/SPONSOR LOGOS/2. Industry Partners/Invesco_Global_Logo_White_Rev_RGB.png" },
+      { "name": "LGT Wealth Management", "logoLight": "/assets/DATAROOM/SPONSOR LOGOS/2. Industry Partners/LGT_WM_Logo_rgb.png", "logoDark": "/assets/DATAROOM/SPONSOR LOGOS/2. Industry Partners/LGT_WM_Logo_cmyk_white_outline.png" },
+      { "name": "Volcafe", "logoLight": "/assets/DATAROOM/SPONSOR LOGOS/2. Industry Partners/Volcafe_Landscape_01_PrimaryLogo_RGB_BLACK-01.png", "logoDark": "/assets/DATAROOM/SPONSOR LOGOS/2. Industry Partners/Volcafe_Landscape_01_PrimaryLogo_TREE_&_WHITE_RGB-01.png" },
+      { "name": "Wellington Management", "logo": "/assets/DATAROOM/SPONSOR LOGOS/2. Industry Partners/wellington management Logo.png" }
+    ],
+    "event": [
+      { "name": "Carioca", "logo": "/assets/DATAROOM/SPONSOR LOGOS/3. Event Partners/Carioca.png" },
+      { "name": "Finimize", "logo": "/assets/DATAROOM/SPONSOR LOGOS/3. Event Partners/Finimize Logo .png" },
+      { "name": "MCD Capital", "logo": "/assets/DATAROOM/SPONSOR LOGOS/3. Event Partners/MCD Capital.png" },
+      { "name": "Perfect Ted", "logo": "/assets/DATAROOM/SPONSOR LOGOS/3. Event Partners/Perfect Ted.png" },
+      { "name": "Venchi", "logo": "/assets/DATAROOM/SPONSOR LOGOS/3. Event Partners/Venchi.png" },
+      { "name": "Wall Street Skinny", "logo": "/assets/DATAROOM/SPONSOR LOGOS/3. Event Partners/WallStreetSkinny.png" }
+    ],
+    "universities": [
+      { "name": "Bath", "logo": "/assets/DATAROOM/SPONSOR LOGOS/4. Uni Partners/Bath logo.png" },
+      { "name": "Imperial", "logo": "/assets/DATAROOM/SPONSOR LOGOS/4. Uni Partners/Imperial logo .jpg" },
+      { "name": "King's", "logo": "/assets/DATAROOM/SPONSOR LOGOS/4. Uni Partners/King_s logo.png" },
+      { "name": "Lancaster", "logo": "/assets/DATAROOM/SPONSOR LOGOS/4. Uni Partners/lancaster-university-logo-png_seeklogo-481318.png" },
+      { "name": "Loughborough", "logo": "/assets/DATAROOM/SPONSOR LOGOS/4. Uni Partners/Loughborough Uni logo .jpg" },
+      { "name": "LSE", "logo": "/assets/DATAROOM/SPONSOR LOGOS/4. Uni Partners/LSE logo.png" },
+      { "name": "Manchester", "logo": "/assets/DATAROOM/SPONSOR LOGOS/4. Uni Partners/Manchester Logo .jpg" },
+      { "name": "Nottingham", "logo": "/assets/DATAROOM/SPONSOR LOGOS/4. Uni Partners/Nottingham Logo.png" },
+      { "name": "Queen Mary", "logo": "/assets/DATAROOM/SPONSOR LOGOS/4. Uni Partners/Queen Mary logo.webp" },
+      { "name": "UCL", "logo": "/assets/DATAROOM/SPONSOR LOGOS/4. Uni Partners/UCL logo.png" },
+      { "name": "Exeter", "logo": "/assets/DATAROOM/SPONSOR LOGOS/4. Uni Partners/Uni_Exeter.svg" },
+      { "name": "Warwick", "logo": "/assets/DATAROOM/SPONSOR LOGOS/4. Uni Partners/Warwick Logo.png" }
+    ],
+    "societies": [
+      "/assets/DATAROOM/SPONSOR LOGOS/5. Societies/1631377850772.jpg",
+      "/assets/DATAROOM/SPONSOR LOGOS/5. Societies/1713109914782.jpg",
+      "/assets/DATAROOM/SPONSOR LOGOS/5. Societies/1744718539638.jpg",
+      "/assets/DATAROOM/SPONSOR LOGOS/5. Societies/Branding_3_6c0ae620-e9b9-48df-9073-3321e56e57e1.webp",
+      "/assets/DATAROOM/SPONSOR LOGOS/5. Societies/download-10.jpg",
+      "/assets/DATAROOM/SPONSOR LOGOS/5. Societies/download-11.jpg",
+      "/assets/DATAROOM/SPONSOR LOGOS/5. Societies/download-12.jpg",
+      "/assets/DATAROOM/SPONSOR LOGOS/5. Societies/download-29.png",
+      "/assets/DATAROOM/SPONSOR LOGOS/5. Societies/download-31.png",
+      "/assets/DATAROOM/SPONSOR LOGOS/5. Societies/download-33.png",
+      "/assets/DATAROOM/SPONSOR LOGOS/5. Societies/download-35.png",
+      "/assets/DATAROOM/SPONSOR LOGOS/5. Societies/download-47.png",
+      "/assets/DATAROOM/SPONSOR LOGOS/5. Societies/download-7.jpg",
+      "/assets/DATAROOM/SPONSOR LOGOS/5. Societies/download-9.jpg",
+      "/assets/DATAROOM/SPONSOR LOGOS/5. Societies/S9eWw4oTp3Jx.jpg",
+      "/assets/DATAROOM/SPONSOR LOGOS/5. Societies/Screenshot 2025-12-04 at 20.09.01.png"
+    ]
+  }
+}

@@ -10,23 +10,18 @@ interface BreakScreenProps {
   };
 }
 
-// Partner logos for display during breaks
 const PARTNER_LOGOS = [
-  { name: 'MCD Edu', color: 'from-blue-400 to-blue-600' },
-  { name: 'Umushroom', color: 'from-green-400 to-green-600' },
-  { name: 'Bloomberg', color: 'from-orange-400 to-orange-600' },
-  { name: 'CFA UK', color: 'from-purple-400 to-purple-600' },
+  { name: 'MCD Edu', logo: '/assets/DATAROOM/SPONSOR LOGOS/1. ORGANISERS  (EVERYWHERE!)/MCD - White.png' },
+  { name: 'UMushroom', logo: '/assets/DATAROOM/SPONSOR LOGOS/1. ORGANISERS  (EVERYWHERE!)/umushroom_white.png' },
 ];
 
 export function BreakScreen({ timer }: BreakScreenProps) {
   const { state } = useLiveStateStore();
   const stageTitle = state?.currentStage?.title || 'Break Time';
   
-  // Determine break type from stage title
   const isRefreshments = stageTitle.toLowerCase().includes('refreshment');
   const isComfort = stageTitle.toLowerCase().includes('comfort');
 
-  // Calculate resume time (approximate)
   const getResumeTime = () => {
     const timerParts = timer.formatted.split(':');
     const minutes = parseInt(timerParts[0] || '0');
@@ -36,29 +31,23 @@ export function BreakScreen({ timer }: BreakScreenProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-navy-950 via-navy-900 to-navy-950 relative overflow-hidden">
-      {/* Soft animated background */}
+    <div className="min-h-screen bg-navy-950 relative overflow-hidden">
+      {/* Background */}
       <div className="absolute inset-0 pointer-events-none">
+        <div 
+          className="absolute top-0 right-0 w-[50%] h-full"
+          style={{
+            background: 'linear-gradient(135deg, transparent 0%, rgba(0, 85, 254, 0.08) 50%, rgba(0, 217, 255, 0.05) 100%)',
+          }}
+        />
         <motion.div
-          className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-gold-500/5 rounded-full blur-[100px]"
+          className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-mcd-500/5 rounded-full blur-[100px]"
           animate={{
             x: [0, 30, 0],
             y: [0, 20, 0],
           }}
           transition={{
             duration: 10,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-        <motion.div
-          className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[80px]"
-          animate={{
-            x: [0, -20, 0],
-            y: [0, -30, 0],
-          }}
-          transition={{
-            duration: 12,
             repeat: Infinity,
             ease: 'easeInOut',
           }}
@@ -76,12 +65,12 @@ export function BreakScreen({ timer }: BreakScreenProps) {
           <motion.div
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            className="w-32 h-32 bg-gradient-to-br from-gold-400/20 to-gold-600/20 rounded-full flex items-center justify-center border border-gold-500/30"
+            className="w-32 h-32 bg-gradient-to-br from-mcd-500/20 to-cyan-500/20 rounded-full flex items-center justify-center border border-mcd-500/30"
           >
             {isRefreshments ? (
-              <Cookie className="w-16 h-16 text-gold-500" />
+              <Cookie className="w-16 h-16 text-mcd-400" />
             ) : (
-              <Coffee className="w-16 h-16 text-gold-500" />
+              <Coffee className="w-16 h-16 text-mcd-400" />
             )}
           </motion.div>
         </motion.div>
@@ -111,18 +100,17 @@ export function BreakScreen({ timer }: BreakScreenProps) {
           transition={{ delay: 0.4 }}
           className="text-center mb-8"
         >
-          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl mb-4">
-            <Clock className="w-6 h-6 text-gold-400" />
-            <span className="text-6xl font-mono font-bold text-gold-400">
+          <div className="inline-flex items-center gap-3 px-6 py-3 bg-mcd-500/10 border border-mcd-500/30 rounded-2xl mb-4">
+            <Clock className="w-6 h-6 text-mcd-400" />
+            <span className="text-6xl font-mono font-bold text-mcd-400">
               {timer.formatted}
             </span>
           </div>
           
-          {/* Progress bar */}
           <div className="w-80 mx-auto">
             <div className="h-2 bg-white/10 rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-gold-500 to-gold-400"
+                className="h-full bg-gradient-to-r from-mcd-500 to-cyan-500"
                 style={{ width: `${timer.progress}%` }}
               />
             </div>
@@ -137,7 +125,7 @@ export function BreakScreen({ timer }: BreakScreenProps) {
           className="flex items-center gap-3 text-muted-foreground mb-16"
         >
           <span>We'll resume at approximately</span>
-          <span className="px-3 py-1 bg-gold-500/20 text-gold-400 rounded-full font-mono font-bold">
+          <span className="px-3 py-1 bg-mcd-500/20 text-mcd-400 rounded-full font-mono font-bold">
             {getResumeTime()}
           </span>
           <ArrowRight className="w-4 h-4" />
@@ -151,9 +139,9 @@ export function BreakScreen({ timer }: BreakScreenProps) {
           className="text-center"
         >
           <p className="text-xs text-muted-foreground mb-4 uppercase tracking-wider">
-            Supported by
+            Organised by
           </p>
-          <div className="flex justify-center items-center gap-6">
+          <div className="flex justify-center items-center gap-8">
             {PARTNER_LOGOS.map((partner, idx) => (
               <motion.div
                 key={partner.name}
@@ -161,9 +149,13 @@ export function BreakScreen({ timer }: BreakScreenProps) {
                 animate={{ opacity: 0.6, y: 0 }}
                 transition={{ delay: 1 + idx * 0.1 }}
                 whileHover={{ opacity: 1 }}
-                className={`w-24 h-10 bg-gradient-to-br ${partner.color} rounded-lg flex items-center justify-center`}
+                className="h-10 flex items-center justify-center"
               >
-                <span className="font-bold text-white text-xs">{partner.name}</span>
+                <img 
+                  src={partner.logo} 
+                  alt={partner.name} 
+                  className="h-full w-auto object-contain max-w-[120px]"
+                />
               </motion.div>
             ))}
           </div>

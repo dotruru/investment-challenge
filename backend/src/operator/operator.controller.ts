@@ -4,12 +4,8 @@ import {
   Post,
   Body,
   Param,
-  UseGuards,
 } from '@nestjs/common';
 import { OperatorService } from './operator.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
 import {
   SetStageDto,
   SetTeamDto,
@@ -19,8 +15,6 @@ import {
 } from './dto/operator.dto';
 
 @Controller('operator/events/:eventId')
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('admin', 'operator')
 export class OperatorController {
   constructor(private operatorService: OperatorService) {}
 

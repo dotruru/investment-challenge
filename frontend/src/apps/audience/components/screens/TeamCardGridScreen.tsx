@@ -10,7 +10,6 @@ export function TeamCardGridScreen() {
   const [teams, setTeams] = useState<Team[]>([]);
 
   useEffect(() => {
-    // Fetch teams from public API
     const loadTeams = async () => {
       try {
         const response = await fetch(`/api/v1/events/${eventId}/display`);
@@ -24,11 +23,17 @@ export function TeamCardGridScreen() {
   }, [eventId]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-navy-950 via-navy-900 to-navy-950 p-8 overflow-hidden">
-      {/* Animated background */}
+    <div className="min-h-screen bg-navy-950 p-8 overflow-hidden">
+      {/* Background */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-gold-500/5 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px]" />
+        <div 
+          className="absolute top-0 right-0 w-[60%] h-full"
+          style={{
+            background: 'linear-gradient(135deg, transparent 0%, rgba(0, 85, 254, 0.1) 50%, rgba(0, 217, 255, 0.05) 100%)',
+          }}
+        />
+        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-mcd-500/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[100px]" />
       </div>
 
       <div className="relative z-10">
@@ -85,10 +90,10 @@ export function TeamCardGridScreen() {
               className="group relative"
             >
               {/* Card glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-gold-500/20 to-gold-600/10 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-br from-mcd-500/20 to-cyan-500/10 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               
               {/* Card */}
-              <div className="relative bg-gradient-to-br from-card/90 to-card/70 backdrop-blur-sm border border-gold-500/20 group-hover:border-gold-500/50 rounded-xl p-4 text-center transition-all duration-300 overflow-hidden">
+              <div className="relative bg-navy-800/80 backdrop-blur-sm border border-mcd-500/20 group-hover:border-mcd-500/50 rounded-xl p-4 text-center transition-all duration-300 overflow-hidden">
                 {/* Shine effect */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
@@ -97,8 +102,8 @@ export function TeamCardGridScreen() {
                 {/* Round badge */}
                 <div className="absolute top-2 right-2">
                   <span className={`px-2 py-0.5 rounded text-xs font-bold ${
-                    team.roundAssignment === 1 ? 'bg-blue-500/20 text-blue-400' :
-                    team.roundAssignment === 2 ? 'bg-purple-500/20 text-purple-400' :
+                    team.roundAssignment === 1 ? 'bg-mcd-500/20 text-mcd-400' :
+                    team.roundAssignment === 2 ? 'bg-cyan-500/20 text-cyan-400' :
                     'bg-green-500/20 text-green-400'
                   }`}>
                     R{team.roundAssignment}
@@ -106,7 +111,7 @@ export function TeamCardGridScreen() {
                 </div>
 
                 {/* Team Avatar */}
-                <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-gold-400 to-gold-600 rounded-xl flex items-center justify-center text-2xl font-bold text-navy-950 shadow-lg shadow-gold-500/20 group-hover:shadow-gold-500/40 transition-shadow">
+                <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-mcd-500 to-cyan-500 rounded-xl flex items-center justify-center text-2xl font-bold text-white shadow-lg shadow-mcd-500/20 group-hover:shadow-mcd-500/40 transition-shadow">
                   {team.avatarCardImageUrl ? (
                     <img src={team.avatarCardImageUrl} alt={team.name} className="w-full h-full object-cover rounded-xl" />
                   ) : (
@@ -120,7 +125,7 @@ export function TeamCardGridScreen() {
                 
                 {/* Rank Badge */}
                 {team.rankBadge && (
-                  <span className="inline-block mt-2 px-2 py-0.5 bg-gold-500/20 rounded text-xs text-gold-400 font-medium">
+                  <span className="inline-block mt-2 px-2 py-0.5 bg-mcd-500/20 rounded text-xs text-mcd-400 font-medium">
                     {team.rankBadge}
                   </span>
                 )}

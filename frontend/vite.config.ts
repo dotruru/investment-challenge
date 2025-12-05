@@ -27,18 +27,19 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      port: mode === 'admin' ? 5173 
-           : mode === 'operator' ? 5174 
-           : mode === 'audience' ? 5175 
-           : mode === 'jury' ? 5176 
-           : 5173,
+      // Each app runs on its own port
+      port: mode === 'operator' ? 5101 
+           : mode === 'audience' ? 5102 
+           : mode === 'jury' ? 5103 
+           : 5101,
+      strictPort: true,
       proxy: {
         '/api': {
-          target: env.VITE_API_URL || 'http://localhost:3001',
+          target: env.VITE_API_URL || 'http://localhost:3000',
           changeOrigin: true,
         },
         '/socket.io': {
-          target: env.VITE_API_URL || 'http://localhost:3001',
+          target: env.VITE_API_URL || 'http://localhost:3000',
           changeOrigin: true,
           ws: true,
         },

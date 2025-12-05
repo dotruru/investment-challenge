@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, Pause, RotateCcw, ChevronRight, ChevronLeft, Shuffle, Users, Radio, Clock, Layers, 
-  CheckCircle, AlertCircle, Trophy, Sparkles, UserCheck, Volume2, VolumeX, Eye
+  CheckCircle, AlertCircle, Trophy, Sparkles, UserCheck, Volume2, VolumeX, Eye, LogOut
 } from 'lucide-react';
 import { useSocket } from '@/shared/hooks/useSocket';
 import { useLiveStateStore } from '@/shared/stores/liveStateStore';
@@ -12,10 +11,14 @@ import { operatorApi, eventsApi } from '@/shared/api/client';
 import { Button } from '@/shared/components/ui/button';
 import type { EventStage, Team, PersonProfile } from '@/shared/types';
 
-export function OperatorControlPanel() {
-  const { eventId } = useParams<{ eventId: string }>();
+interface OperatorControlPanelProps {
+  eventId: string;
+  onLogout: () => void;
+}
+
+export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanelProps) {
   const { connectionState } = useSocket({
-    eventId: eventId!,
+    eventId: eventId,
     clientType: 'operator',
   });
 
@@ -47,7 +50,7 @@ export function OperatorControlPanel() {
 
   const loadEventData = async () => {
     try {
-      const eventData = await eventsApi.get(eventId!);
+      const eventData = await eventsApi.get(eventId);
       setEvent(eventData);
       setStages(eventData.stages || []);
       setTeams(eventData.teams || []);
@@ -61,7 +64,7 @@ export function OperatorControlPanel() {
 
   const loadScoringStatus = async () => {
     try {
-      const status = await operatorApi.getScoringStatus(eventId!);
+      const status = await operatorApi.getScoringStatus(eventId);
       setScoringStatus(status);
     } catch (error) {
       console.error('Failed to load scoring status:', error);
@@ -71,7 +74,7 @@ export function OperatorControlPanel() {
   // Stage Controls
   const handleSetStage = async (stageId: string) => {
     try {
-      await operatorApi.setStage(eventId!, stageId);
+      await operatorApi.setStage(eventId, stageId);
     } catch (error) {
       console.error('Failed to set stage:', error);
     }
@@ -94,7 +97,7 @@ export function OperatorControlPanel() {
   // Team Controls
   const handleSetTeam = async (teamId: string) => {
     try {
-      await operatorApi.setTeam(eventId!, teamId);
+      await operatorApi.setTeam(eventId, teamId);
     } catch (error) {
       console.error('Failed to set team:', error);
     }
@@ -103,7 +106,7 @@ export function OperatorControlPanel() {
   // Timer Controls
   const handleStartTimer = async (type: 'presentation' | 'qa' | 'break', duration: number) => {
     try {
-      await operatorApi.startTimer(eventId!, type, duration);
+      await operatorApi.startTimer(eventId, type, duration);
       if (soundEnabled) playSound('start');
     } catch (error) {
       console.error('Failed to start timer:', error);
@@ -113,9 +116,9 @@ export function OperatorControlPanel() {
   const handlePauseTimer = async () => {
     try {
       if (timer.status === 'paused') {
-        await operatorApi.resumeTimer(eventId!);
+        await operatorApi.resumeTimer(eventId);
       } else {
-        await operatorApi.pauseTimer(eventId!);
+        await operatorApi.pauseTimer(eventId);
       }
     } catch (error) {
       console.error('Failed to pause/resume timer:', error);
@@ -124,7 +127,7 @@ export function OperatorControlPanel() {
 
   const handleResetTimer = async () => {
     try {
-      await operatorApi.resetTimer(eventId!);
+      await operatorApi.resetTimer(eventId);
     } catch (error) {
       console.error('Failed to reset timer:', error);
     }
@@ -134,7 +137,7 @@ export function OperatorControlPanel() {
   const handleRandomizeRound = async (roundNumber: number) => {
     try {
       if (soundEnabled) playSound('shuffle');
-      const result = await operatorApi.randomizeRound(eventId!, roundNumber);
+      const result = await operatorApi.randomizeRound(eventId, roundNumber);
       await loadEventData();
     } catch (error) {
       console.error('Failed to randomize round:', error);
@@ -143,7 +146,7 @@ export function OperatorControlPanel() {
 
   const handleNextTeam = async () => {
     try {
-      await operatorApi.nextTeam(eventId!);
+      await operatorApi.nextTeam(eventId);
     } catch (error) {
       console.error('Failed to go to next team:', error);
     }
@@ -152,7 +155,7 @@ export function OperatorControlPanel() {
   // Animation Controls
   const handleTriggerAnimation = async (animation: string, params?: any) => {
     try {
-      await operatorApi.triggerAnimation(eventId!, animation, params);
+      await operatorApi.triggerAnimation(eventId, animation, params);
       if (soundEnabled) playSound('reveal');
     } catch (error) {
       console.error('Failed to trigger animation:', error);
@@ -161,7 +164,7 @@ export function OperatorControlPanel() {
 
   const handleNextAnimationStep = async () => {
     try {
-      await operatorApi.nextAnimationStep(eventId!);
+      await operatorApi.nextAnimationStep(eventId);
       if (soundEnabled) playSound('reveal');
     } catch (error) {
       console.error('Failed to advance animation:', error);
@@ -171,7 +174,7 @@ export function OperatorControlPanel() {
   // Awards Controls
   const handleLockAwards = async () => {
     try {
-      await operatorApi.lockAwards(eventId!);
+      await operatorApi.lockAwards(eventId);
       if (soundEnabled) playSound('victory');
     } catch (error) {
       console.error('Failed to lock awards:', error);
@@ -253,12 +256,15 @@ export function OperatorControlPanel() {
               }`} />
               {connectionState.isConnected ? 'Live' : 'Offline'}
             </div>
-            <a href={`http://localhost:5183/event/${eventId}`} target="_blank" rel="noopener noreferrer">
+            <a href={`http://localhost:5102/event/${eventId}`} target="_blank" rel="noopener noreferrer">
               <Button variant="outline" size="sm">
                 <Eye className="w-4 h-4 mr-2" />
                 Audience
               </Button>
             </a>
+            <Button variant="ghost" size="sm" onClick={onLogout}>
+              <LogOut className="w-4 h-4" />
+            </Button>
           </div>
         </div>
       </header>

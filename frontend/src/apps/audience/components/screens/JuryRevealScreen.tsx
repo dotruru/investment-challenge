@@ -12,11 +12,9 @@ export function JuryRevealScreen() {
   const [currentRevealIndex, setCurrentRevealIndex] = useState(-1);
   const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
 
-  // Get animation state from live state
   const animationStep = state?.animationState?.step || 0;
 
   useEffect(() => {
-    // Fetch jury members
     const loadJury = async () => {
       try {
         const response = await fetch(`/api/v1/events/${eventId}/display`);
@@ -32,7 +30,6 @@ export function JuryRevealScreen() {
     if (eventId) loadJury();
   }, [eventId]);
 
-  // Sync reveals with animation step from operator
   useEffect(() => {
     if (animationStep > 0 && animationStep <= juryMembers.length) {
       const juryToReveal = juryMembers[animationStep - 1];
@@ -46,12 +43,17 @@ export function JuryRevealScreen() {
   const currentJury = currentRevealIndex >= 0 ? juryMembers[currentRevealIndex] : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-navy-950 via-navy-900 to-navy-950 relative overflow-hidden">
+    <div className="min-h-screen bg-navy-950 relative overflow-hidden">
       {/* Background effects */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-gold-500/10 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-gold-500/5 rounded-full blur-[120px]" />
+        <div 
+          className="absolute top-0 right-0 w-[60%] h-full"
+          style={{
+            background: 'linear-gradient(135deg, transparent 0%, rgba(0, 85, 254, 0.12) 50%, rgba(0, 217, 255, 0.08) 100%)',
+          }}
+        />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-mcd-500/10 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-[120px]" />
       </div>
 
       <div className="relative z-10 h-screen flex flex-col p-8">
@@ -85,9 +87,9 @@ export function JuryRevealScreen() {
                   className="mb-8"
                 >
                   {/* Jury Card */}
-                  <div className="w-80 bg-gradient-to-br from-card/90 to-card/70 backdrop-blur-xl border border-gold-500/30 rounded-2xl p-6 shadow-2xl">
+                  <div className="w-80 bg-navy-800/80 backdrop-blur-xl border border-mcd-500/30 rounded-2xl p-6 shadow-2xl">
                     {/* Photo */}
-                    <div className="w-48 h-48 mx-auto mb-6 rounded-2xl overflow-hidden bg-gradient-to-br from-gold-400 to-gold-600 shadow-lg shadow-gold-500/30">
+                    <div className="w-48 h-48 mx-auto mb-6 rounded-2xl overflow-hidden bg-gradient-to-br from-mcd-500 to-cyan-500 shadow-lg shadow-mcd-500/30">
                       {currentJury.photoUrl ? (
                         <img
                           src={currentJury.photoUrl}
@@ -95,7 +97,7 @@ export function JuryRevealScreen() {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-6xl font-bold text-navy-950">
+                        <div className="w-full h-full flex items-center justify-center text-6xl font-bold text-white">
                           {currentJury.name.charAt(0)}
                         </div>
                       )}
@@ -114,7 +116,7 @@ export function JuryRevealScreen() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.6 }}
-                      className="text-gold-400 font-medium mb-1"
+                      className="text-mcd-400 font-medium mb-1"
                     >
                       {currentJury.role}
                     </motion.p>
@@ -147,7 +149,7 @@ export function JuryRevealScreen() {
                 animate={{ opacity: 1 }}
                 className="text-center"
               >
-                <div className="w-80 aspect-[3/4] bg-gradient-to-br from-gold-400/20 to-gold-600/20 rounded-2xl border-2 border-dashed border-gold-500/30 flex items-center justify-center">
+                <div className="w-80 aspect-[3/4] bg-gradient-to-br from-mcd-500/20 to-cyan-500/20 rounded-2xl border-2 border-dashed border-mcd-500/30 flex items-center justify-center">
                   <div className="text-center">
                     <span className="text-6xl mb-4 block">🎭</span>
                     <p className="text-xl text-muted-foreground">
@@ -181,11 +183,11 @@ export function JuryRevealScreen() {
                       scale: isCurrent ? 1.1 : 1 
                     }}
                     transition={{ delay: isRevealed ? 0.5 : 0 }}
-                    className={`relative ${isCurrent ? 'ring-2 ring-gold-500 ring-offset-2 ring-offset-navy-950' : ''}`}
+                    className={`relative ${isCurrent ? 'ring-2 ring-mcd-500 ring-offset-2 ring-offset-navy-950' : ''}`}
                   >
                     <div className={`w-16 h-16 rounded-full overflow-hidden ${
                       isRevealed 
-                        ? 'bg-gradient-to-br from-gold-400 to-gold-600' 
+                        ? 'bg-gradient-to-br from-mcd-500 to-cyan-500' 
                         : 'bg-secondary'
                     }`}>
                       {isRevealed && jury.photoUrl ? (
@@ -195,7 +197,7 @@ export function JuryRevealScreen() {
                           className="w-full h-full object-cover"
                         />
                       ) : isRevealed ? (
-                        <div className="w-full h-full flex items-center justify-center text-xl font-bold text-navy-950">
+                        <div className="w-full h-full flex items-center justify-center text-xl font-bold text-white">
                           {jury.name.charAt(0)}
                         </div>
                       ) : (
@@ -219,4 +221,3 @@ export function JuryRevealScreen() {
     </div>
   );
 }
-

@@ -215,23 +215,72 @@ export class OperatorService {
   }
 
   async nextTeam(eventId: string) {
-    // Complete current team
-    await this.liveStateService.completeCurrentTeam(eventId);
-    
     const state = await this.liveStateService.getState(eventId);
-    const { roundState } = state;
+    const { roundState, currentTeamId } = state;
+    
+    let nextTeamId: string | null = null;
 
-    // Check if there are more teams
-    if (roundState.currentTeamIndex < roundState.teamOrder.length) {
-      const nextTeamId = roundState.teamOrder[roundState.currentTeamIndex];
-      return this.setTeam(eventId, nextTeamId);
+    // If we have a team order from shuffling, use that
+    if (roundState.teamOrder && roundState.teamOrder.length > 0) {
+      // Complete current team first
+      if (currentTeamId) {
+        await this.liveStateService.completeCurrentTeam(eventId);
+        // Re-fetch state after completing
+        const updatedState = await this.liveStateService.getState(eventId);
+        
+        if (updatedState.roundState.currentTeamIndex < roundState.teamOrder.length) {
+          nextTeamId = roundState.teamOrder[updatedState.roundState.currentTeamIndex];
+        }
+      } else {
+        // No current team, start with first in order
+        nextTeamId = roundState.teamOrder[0];
+      }
+    } else {
+      // No shuffle order - get teams from DB and find next one
+      const currentRound = roundState.currentRound || (state.currentStage?.configuration as any)?.roundNumber || 1;
+      
+      const teams = await this.prisma.team.findMany({
+        where: { 
+          eventId,
+          roundAssignment: currentRound,
+        },
+        orderBy: [
+          { presentationOrder: 'asc' },
+          { createdAt: 'asc' },
+        ],
+      });
+
+      if (teams.length === 0) {
+        return {
+          success: false,
+          message: 'No teams found for this round',
+        };
+      }
+
+      // Find current team's position and get next
+      if (currentTeamId) {
+        const currentIndex = teams.findIndex(t => t.id === currentTeamId);
+        if (currentIndex >= 0 && currentIndex < teams.length - 1) {
+          nextTeamId = teams[currentIndex + 1].id;
+        }
+        // Mark current as completed
+        await this.liveStateService.completeCurrentTeam(eventId);
+      } else {
+        // No current team, start with first
+        nextTeamId = teams[0].id;
+      }
     }
 
-    return {
-      success: false,
-      message: 'No more teams in this round',
-      liveState: state,
-    };
+    if (!nextTeamId) {
+      return {
+        success: false,
+        message: 'No more teams in this round',
+        liveState: state,
+      };
+    }
+
+    // Set the next team directly (skip transition for now to keep it simple)
+    return this.setTeam(eventId, nextTeamId);
   }
 
   // Timer sync interval management

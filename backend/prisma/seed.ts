@@ -23,7 +23,7 @@ async function main() {
   console.log('✅ Created admin user:', admin.email);
 
   // Create operator user
-  const operatorPassword = await bcrypt.hash('operator123', 10);
+  const operatorPassword = await bcrypt.hash('operator0000', 10);
   const operator = await prisma.adminUser.upsert({
     where: { email: 'operator@example.com' },
     update: {},
@@ -39,8 +39,8 @@ async function main() {
   // Create sample event
   const event = await prisma.event.create({
     data: {
-      name: 'UK Investment Challenge 2024',
-      date: new Date('2024-06-15T09:00:00Z'),
+      name: 'UK University Investment Competition 2025',
+      date: new Date('2025-12-05T09:00:00Z'),
       venue: 'London, UK',
       status: 'DRAFT',
     },
@@ -77,23 +77,181 @@ async function main() {
   }
   console.log('✅ Created', stages.length, 'stages');
 
-  // Create sample teams
+  // Create actual teams from the competition with photos
   const teams = [
-    { name: 'Alpha Capital', university: 'Oxford University', round: 1 },
-    { name: 'Beta Investments', university: 'Cambridge University', round: 1 },
-    { name: 'Gamma Fund', university: 'LSE', round: 1 },
-    { name: 'Delta Partners', university: 'Imperial College', round: 1 },
-    { name: 'Epsilon Holdings', university: 'UCL', round: 1 },
-    { name: 'Zeta Ventures', university: 'King\'s College', round: 2 },
-    { name: 'Eta Capital', university: 'Warwick University', round: 2 },
-    { name: 'Theta Fund', university: 'Manchester University', round: 2 },
-    { name: 'Iota Investments', university: 'Edinburgh University', round: 2 },
-    { name: 'Kappa Partners', university: 'Durham University', round: 2 },
-    { name: 'Lambda Holdings', university: 'Bristol University', round: 3 },
-    { name: 'Mu Ventures', university: 'Bath University', round: 3 },
-    { name: 'Nu Capital', university: 'Exeter University', round: 3 },
-    { name: 'Xi Fund', university: 'York University', round: 3 },
-    { name: 'Omicron Investments', university: 'Sheffield University', round: 3 },
+    {
+      name: 'ACSL Veterans',
+      university: 'Amsterdam',
+      round: 1,
+      logo: null,
+      members: [
+        { name: 'David Dragichi', photo: '/assets/DATAROOM/TEAMS/1. ACSL VETERANS (Amsterdam)/David Dragichi.jpg' },
+        { name: 'Nicolae Darie-Nistor', photo: '/assets/DATAROOM/TEAMS/1. ACSL VETERANS (Amsterdam)/Nicolae Darie-Nistor.jpg' },
+        { name: 'Robert Jacob Oros', photo: '/assets/DATAROOM/TEAMS/1. ACSL VETERANS (Amsterdam)/Robert Jacob Oros.jpg' },
+      ],
+      stats: { performance: -6.13, sharpe: -6.37, volatility: 13.55 },
+    },
+    {
+      name: 'Dalio Lama',
+      university: 'Bath',
+      round: 1,
+      logo: '/assets/DATAROOM/TEAMS/2. DALIO LAMA (Bath)/Dalio_Lama_logo.png',
+      members: [
+        { name: 'Daksh', photo: '/assets/DATAROOM/TEAMS/2. DALIO LAMA (Bath)/Daksh_photo.jpg' },
+        { name: 'Nag', photo: '/assets/DATAROOM/TEAMS/2. DALIO LAMA (Bath)/Nag_photo.jpg' },
+        { name: 'Keshav Iyer', photo: '/assets/DATAROOM/TEAMS/2. DALIO LAMA (Bath)/Keshav Iyer.png' },
+      ],
+      stats: { performance: 4.02, sharpe: 2.17, volatility: 32.09 },
+    },
+    {
+      name: 'Black Swan Capital',
+      university: 'Exeter',
+      round: 1,
+      logo: '/assets/DATAROOM/TEAMS/3. BLACK SWAN CAPITAL (Exeter)/black swan logo.png',
+      members: [
+        { name: 'Benji Crawford', photo: '/assets/DATAROOM/TEAMS/3. BLACK SWAN CAPITAL (Exeter)/WhatsApp Image 2025-12-03 at 15.30.31_182630f9.jpg' },
+        { name: 'Robert Zhulyev', photo: '/assets/DATAROOM/TEAMS/3. BLACK SWAN CAPITAL (Exeter)/WhatsApp Image 2025-12-03 at 16.55.55_06e17c3e.jpg' },
+        { name: 'Andrei Khristoliubov', photo: '/assets/DATAROOM/TEAMS/3. BLACK SWAN CAPITAL (Exeter)/WhatsApp Image 2025-12-03 at 17.10.17_872a4821.jpg' },
+      ],
+      stats: { performance: 1.90, sharpe: null, volatility: 0.90 },
+    },
+    {
+      name: 'Platypus Partners',
+      university: 'Imperial',
+      round: 1,
+      logo: '/assets/DATAROOM/TEAMS/4. PLATYPUS PARTNERS (Imperial)/Platypus Logo.png',
+      members: [
+        { name: 'Adam Hrehovcik', photo: '/assets/DATAROOM/TEAMS/4. PLATYPUS PARTNERS (Imperial)/Adam Hrehovcik.JPG' },
+        { name: 'Joaquim Silva', photo: '/assets/DATAROOM/TEAMS/4. PLATYPUS PARTNERS (Imperial)/Joaquim Silva.jpg' },
+      ],
+      stats: { performance: 4.10, sharpe: 1.46, volatility: 21.30 },
+    },
+    {
+      name: 'HMC Capital',
+      university: "King's",
+      round: 1,
+      logo: '/assets/DATAROOM/TEAMS/5. HMC CAPITAL (King_s)/HMC Capital - Logo.png',
+      members: [
+        { name: 'Can Berk Ican', photo: '/assets/DATAROOM/TEAMS/5. HMC CAPITAL (King_s)/Can Berk Ican.jpg' },
+        { name: 'Hugo Raffard', photo: '/assets/DATAROOM/TEAMS/5. HMC CAPITAL (King_s)/Hugo Raffard.png' },
+        { name: 'Murathan Berk Afacan', photo: '/assets/DATAROOM/TEAMS/5. HMC CAPITAL (King_s)/Murathan Berk Afacan.jpg' },
+      ],
+      stats: { performance: 4.86, sharpe: 4.3, volatility: 9.14 },
+    },
+    {
+      name: 'Mirage Capital',
+      university: 'Lancaster',
+      round: 2,
+      logo: '/assets/DATAROOM/TEAMS/6. MIRAGE CAPITAL (Lancaster)/Mirage Capital logo.jpeg',
+      members: [
+        { name: 'Elsa Mhangami', photo: '/assets/DATAROOM/TEAMS/6. MIRAGE CAPITAL (Lancaster)/Elsa Mhangami.jpg' },
+        { name: 'Maryam Jaouad', photo: '/assets/DATAROOM/TEAMS/6. MIRAGE CAPITAL (Lancaster)/Maryam Jaouad.jpeg' },
+        { name: 'Mohammed Rayan Jaouad', photo: '/assets/DATAROOM/TEAMS/6. MIRAGE CAPITAL (Lancaster)/Mohammed Rayan Jaouad.jpeg' },
+      ],
+      stats: { performance: null, sharpe: 1.28, volatility: null },
+    },
+    {
+      name: 'Rory Tomlinson',
+      university: 'Loughborough',
+      round: 2,
+      logo: '/assets/DATAROOM/TEAMS/7. RORY (Loughborough)/Logo.png',
+      members: [
+        { name: 'Rory Tomlinson', photo: '/assets/DATAROOM/TEAMS/7. RORY (Loughborough)/Rory Tomlinson.jpg' },
+      ],
+      stats: { performance: 2.88, sharpe: 1.32, volatility: 17.10 },
+    },
+    {
+      name: 'Solo Yolo',
+      university: 'LSE',
+      round: 2,
+      logo: null,
+      members: [
+        { name: 'Thomson Chua', photo: '/assets/DATAROOM/TEAMS/8. SOLO YOLO (LSE)/Thomson Chua.jpeg' },
+      ],
+      stats: { performance: 2.26, sharpe: null, volatility: 27.90 },
+    },
+    {
+      name: 'LockedIn',
+      university: 'Manchester',
+      round: 2,
+      logo: '/assets/DATAROOM/TEAMS/9. LOCKEDIN (Manchester)/LockedIn Logo.jpeg',
+      members: [
+        { name: 'Jaime Sancho', photo: '/assets/DATAROOM/TEAMS/9. LOCKEDIN (Manchester)/Jaime Sancho.jpeg' },
+        { name: 'Sidhanth Srikanth', photo: '/assets/DATAROOM/TEAMS/9. LOCKEDIN (Manchester)/Sidhanth Srikanth.jpeg' },
+        { name: 'Vadim Voloshin', photo: '/assets/DATAROOM/TEAMS/9. LOCKEDIN (Manchester)/Vadim Voloshin.jpeg' },
+      ],
+      stats: { performance: -1.10, sharpe: null, volatility: null },
+    },
+    {
+      name: 'Robin Hood Capital',
+      university: 'Nottingham',
+      round: 2,
+      logo: '/assets/DATAROOM/TEAMS/10. ROBIN HOOD CAPITAL (Nottingham)/Robin Hood Capital Logo.png',
+      members: [
+        { name: 'Josh Groves', photo: '/assets/DATAROOM/TEAMS/10. ROBIN HOOD CAPITAL (Nottingham)/Josh Groves.jpeg' },
+        { name: 'Kabir Siddhu', photo: '/assets/DATAROOM/TEAMS/10. ROBIN HOOD CAPITAL (Nottingham)/Kabir Siddhu.jpeg' },
+        { name: 'Muzamel Shah', photo: '/assets/DATAROOM/TEAMS/10. ROBIN HOOD CAPITAL (Nottingham)/Muzamel Shah.jpeg' },
+      ],
+      stats: { performance: null, sharpe: null, volatility: null },
+    },
+    {
+      name: 'Canonical',
+      university: 'Queen Mary',
+      round: 3,
+      logo: '/assets/DATAROOM/TEAMS/11. CANONICAL (Queen Mary)/canonicallogo.png',
+      members: [
+        { name: 'Jamie Jia Jing Teh', photo: '/assets/DATAROOM/TEAMS/11. CANONICAL (Queen Mary)/Jamie Jia Jing Teh.png' },
+        { name: 'Mehmet John Evans', photo: '/assets/DATAROOM/TEAMS/11. CANONICAL (Queen Mary)/Mehmet John Evans.png' },
+        { name: 'Shivesh Lochunah', photo: '/assets/DATAROOM/TEAMS/11. CANONICAL (Queen Mary)/Shivesh Lochunah.png' },
+      ],
+      stats: { performance: 2.32, sharpe: 1.63, volatility: 15.10 },
+    },
+    {
+      name: 'Barestone Capital',
+      university: 'SEO',
+      round: 3,
+      logo: '/assets/DATAROOM/TEAMS/12. BARESTONE CAPITAL (SEO)/Barestone Capital Logo.png',
+      members: [
+        { name: 'Rohan Joseph', photo: '/assets/DATAROOM/TEAMS/12. BARESTONE CAPITAL (SEO)/Rohan Joseph.jpg' },
+      ],
+      stats: { performance: 1.20, sharpe: 0.44, volatility: 12.74 },
+    },
+    {
+      name: 'Blackshard',
+      university: 'UCL',
+      round: 3,
+      logo: '/assets/DATAROOM/TEAMS/13. BLACKSHARD (UCL)/blackshard_logo.png',
+      members: [
+        { name: 'Aran Grant', photo: '/assets/DATAROOM/TEAMS/13. BLACKSHARD (UCL)/Aran Grant.jpg' },
+        { name: 'Sujay Aggarwal', photo: '/assets/DATAROOM/TEAMS/13. BLACKSHARD (UCL)/Sujay Aggarwal.jpg' },
+        { name: 'Sushant Shyam', photo: '/assets/DATAROOM/TEAMS/13. BLACKSHARD (UCL)/Sushant Shyam.jpg' },
+      ],
+      stats: { performance: 3.91, sharpe: 0.9, volatility: 26.40 },
+    },
+    {
+      name: 'Sapiens',
+      university: 'Warwick',
+      round: 3,
+      logo: null,
+      members: [
+        { name: 'David Labella', photo: '/assets/DATAROOM/TEAMS/14. SAPIENS (Warwick)/David Labella.jpg' },
+        { name: 'Manraj Singh', photo: '/assets/DATAROOM/TEAMS/14. SAPIENS (Warwick)/Manraj Singh.JPG' },
+        { name: 'Tariq Howlader', photo: '/assets/DATAROOM/TEAMS/14. SAPIENS (Warwick)/Tariq Howlader.jpg' },
+      ],
+      stats: { performance: 0.90, sharpe: 0.042, volatility: 12.69 },
+    },
+    {
+      name: 'HAD Capital',
+      university: 'Independent',
+      round: 3,
+      logo: null,
+      members: [
+        { name: 'Arjun Juneja', photo: '/assets/DATAROOM/TEAMS/15. HAD CAPITAL (Independent)/Arjun Juneja.jpeg' },
+        { name: 'Dhriti Pareek', photo: '/assets/DATAROOM/TEAMS/15. HAD CAPITAL (Independent)/Dhriti Pareek.jpeg' },
+        { name: 'Hashim Ahmed', photo: '/assets/DATAROOM/TEAMS/15. HAD CAPITAL (Independent)/Hashim Ahmed.jpeg' },
+      ],
+      stats: { performance: 6.50, sharpe: 1.18, volatility: 30.0 },
+    },
   ];
 
   for (const team of teams) {
@@ -104,37 +262,50 @@ async function main() {
         university: team.university,
         roundAssignment: team.round,
         status: 'APPROVED',
-        strategyTagline: `Quantitative approach to ${['growth', 'value', 'momentum', 'income', 'ESG'][Math.floor(Math.random() * 5)]} investing`,
-        stats: {
-          performance: (Math.random() * 30 - 5).toFixed(2),
-          sharpe: (Math.random() * 2 + 0.5).toFixed(2),
-          sortino: (Math.random() * 3 + 0.5).toFixed(2),
-        },
+        avatarCardImageUrl: team.logo,
+        strategyTagline: `Investment strategy from ${team.university}`,
+        stats: team.stats,
       },
     });
 
-    // Add team members
-    const members = ['Portfolio Manager', 'Risk Analyst', 'Research Lead'];
-    for (let i = 0; i < 3; i++) {
+    // Add team members with photos
+    for (let i = 0; i < team.members.length; i++) {
       await prisma.teamMember.create({
         data: {
           teamId: createdTeam.id,
-          name: `${['Alex', 'Jordan', 'Taylor', 'Morgan', 'Casey'][Math.floor(Math.random() * 5)]} ${['Smith', 'Johnson', 'Williams', 'Brown', 'Jones'][Math.floor(Math.random() * 5)]}`,
-          role: members[i],
+          name: team.members[i].name,
+          photoUrl: team.members[i].photo,
+          role: i === 0 ? 'Team Member' : 'Team Member',
           displayOrder: i,
         },
       });
     }
   }
-  console.log('✅ Created', teams.length, 'teams with members');
+  console.log('✅ Created', teams.length, 'teams with members and photos');
 
   // Create jury members
   const juryMembers = [
-    { name: 'Dr. Sarah Chen', role: 'Managing Director', company: 'Goldman Sachs' },
-    { name: 'James Williams', role: 'Partner', company: 'Bridgewater Associates' },
-    { name: 'Elena Rossi', role: 'Chief Investment Officer', company: 'BlackRock' },
-    { name: 'Michael Brown', role: 'Head of Equities', company: 'Fidelity' },
-    { name: 'Amanda Taylor', role: 'Portfolio Manager', company: 'Renaissance Technologies' },
+    {
+      name: 'Tom Jemmett',
+      role: 'Head of Authorised Funds',
+      company: 'LGT Wealth Management',
+      bio: 'Tom is Head of Authorised Funds at LGT Wealth Management, chairing both the Authorised Collectives and Investment Trust Committees.',
+      photoUrl: '/assets/DATAROOM/SPEAKERS-HOSTS/JURY/Tom Jemmett/face.png',
+    },
+    {
+      name: 'Christoph Pfundstein',
+      role: 'Founder',
+      company: 'Golborne Capital',
+      bio: 'Christoph worked 14 years at Goldman Sachs. In 2024, he founded Goldborne Capital for asset-backed lending across Europe.',
+      photoUrl: '/assets/DATAROOM/SPEAKERS-HOSTS/JURY/Christoph Pfundstein/face.png',
+    },
+    {
+      name: 'David Kettle',
+      role: 'Proprietary Trader',
+      company: 'Volcafe',
+      bio: 'David worked at Volcafe proprietary trading for two years. Previously eight years at Marex and six at Macquarie. First class MORSE degree from Warwick.',
+      photoUrl: '/assets/DATAROOM/SPEAKERS-HOSTS/JURY/David Kettle/face.png',
+    },
   ];
 
   for (const jury of juryMembers) {
@@ -145,7 +316,8 @@ async function main() {
         role: jury.role,
         company: jury.company,
         profileType: ProfileType.JURY,
-        bioShort: `${jury.role} at ${jury.company} with 15+ years of experience in investment management.`,
+        bioShort: jury.bio,
+        photoUrl: jury.photoUrl,
       },
     });
 
@@ -160,8 +332,20 @@ async function main() {
 
   // Create hosts
   const hosts = [
-    { name: 'David Moore', role: 'Master of Ceremonies' },
-    { name: 'Sophie Anderson', role: 'Co-host' },
+    {
+      name: 'Giorgio Toledo',
+      role: 'Co-Founder',
+      company: 'MCD Edu',
+      bio: 'Giorgio is committed to closing the gap between employers and graduates through more effective, experience-based recruitment.',
+      photoUrl: '/assets/DATAROOM/SPEAKERS-HOSTS/HOSTS /Giorgio Toledo/face.jpg',
+    },
+    {
+      name: 'Dr. Luba Schoenig',
+      role: 'Co-Founder',
+      company: 'UMushroom',
+      bio: "Luba holds a Master's degree in Economics from the University of Fribourg and a PhD in Quantitative Finance from the University of Zurich.",
+      photoUrl: '/assets/DATAROOM/SPEAKERS-HOSTS/HOSTS /Dr. Luba Schoenig /face.jpg',
+    },
   ];
 
   for (const host of hosts) {
@@ -170,11 +354,47 @@ async function main() {
         eventId: event.id,
         name: host.name,
         role: host.role,
+        company: host.company,
         profileType: ProfileType.HOST,
+        bioShort: host.bio,
+        photoUrl: host.photoUrl,
       },
     });
   }
   console.log('✅ Created', hosts.length, 'hosts');
+
+  // Create speakers
+  const speakers = [
+    {
+      name: 'Ashley Oerth',
+      role: 'Senior Investment Strategist',
+      company: 'Invesco',
+      bio: 'Ashley Oerth is a Senior Investment Strategist for the Global Market Strategy team at Invesco.',
+      photoUrl: '/assets/DATAROOM/SPEAKERS-HOSTS/SPEAKERS/1. Ashley Oerth, CFA/face.jpg',
+    },
+    {
+      name: 'Supriya Menon',
+      role: 'Managing Director, Head of Multi-Asset Strategy EMEA',
+      company: 'Wellington Management',
+      bio: 'Started in macro research at Morgan Stanley and Lehman Brothers, built multi-asset expertise at Aviva and Pictet.',
+      photoUrl: '/assets/DATAROOM/SPEAKERS-HOSTS/SPEAKERS/2. Supriya Menon/face.jpg',
+    },
+  ];
+
+  for (const speaker of speakers) {
+    await prisma.personProfile.create({
+      data: {
+        eventId: event.id,
+        name: speaker.name,
+        role: speaker.role,
+        company: speaker.company,
+        profileType: ProfileType.SPEAKER,
+        bioShort: speaker.bio,
+        photoUrl: speaker.photoUrl,
+      },
+    });
+  }
+  console.log('✅ Created', speakers.length, 'speakers');
 
   // Create scoring criteria
   const criteria = [
@@ -223,7 +443,7 @@ async function main() {
   console.log('\n✨ Seeding complete!');
   console.log('\n📝 Login Credentials:');
   console.log('   Admin: admin@example.com / admin123');
-  console.log('   Operator: operator@example.com / operator123');
+  console.log('   Operator PIN: 0000');
 }
 
 main()
@@ -234,4 +454,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-

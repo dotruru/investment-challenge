@@ -9,6 +9,7 @@ import { WelcomeScreen } from '../components/screens/WelcomeScreen';
 import { JuryRevealScreen } from '../components/screens/JuryRevealScreen';
 import { KeynoteScreen } from '../components/screens/KeynoteScreen';
 import { RoundScreen } from '../components/screens/RoundScreen';
+import { TransitionScreen } from '../components/screens/TransitionScreen';
 import { BreakScreen } from '../components/screens/BreakScreen';
 import { AwardsScreen } from '../components/screens/AwardsScreen';
 import { NetworkingScreen } from '../components/screens/NetworkingScreen';
@@ -54,6 +55,8 @@ export function AudienceScreen() {
         return <KeynoteScreen />;
       case 'ROUND':
         return <RoundScreen timer={timer} />;
+      case 'TEAM_TRANSITION':
+        return <TransitionScreen />;
       case 'BREAK':
         return <BreakScreen timer={timer} />;
       case 'AWARDS':

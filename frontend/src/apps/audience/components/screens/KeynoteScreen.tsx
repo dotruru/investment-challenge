@@ -1,19 +1,70 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Mic, Quote } from 'lucide-react';
 import { useLiveStateStore } from '@/shared/stores/liveStateStore';
+import { useAssets } from '@/shared/hooks/useAssets';
 import type { PersonProfile } from '@/shared/types';
 
 export function KeynoteScreen() {
   const { eventId } = useParams<{ eventId: string }>();
   const { state } = useLiveStateStore();
-  const [speakers, setSpeakers] = useState<PersonProfile[]>([]);
-  const [currentSpeaker, setCurrentSpeaker] = useState<PersonProfile | null>(null);
+  const { speakers: assetSpeakers } = useAssets();
+  const [dbSpeakers, setDbSpeakers] = useState<PersonProfile[]>([]);
 
-  // Get keynote configuration from current stage
   const keynoteConfig = state?.currentStage?.configuration as any;
-  const speakerIndex = keynoteConfig?.speakerIndex || 0;
+  const stageTitle = state?.currentStage?.title || '';
+  const stageId = state?.currentStage?.id;
+  
+  // Determine speaker index from config, stage title, or default - recalculate when stage changes
+  const speakerIndex = useMemo(() => {
+    // 1. Explicit speakerIndex in config (check it's a valid number, not empty object)
+    if (typeof keynoteConfig?.speakerIndex === 'number') {
+      console.log('Using config speakerIndex:', keynoteConfig.speakerIndex);
+      return keynoteConfig.speakerIndex;
+    }
+    
+    // 2. Explicit speakerId in config - find matching index
+    if (keynoteConfig?.speakerId && assetSpeakers.length > 0) {
+      const idx = assetSpeakers.findIndex(s => s.id === keynoteConfig.speakerId);
+      if (idx >= 0) {
+        console.log('Using config speakerId:', keynoteConfig.speakerId, '-> index', idx);
+        return idx;
+      }
+    }
+    
+    // 3. Parse from stage title (e.g., "Keynote 1", "Keynote 2", "Keynote1", "keynote 2")
+    const match = stageTitle.match(/keynote\s*(\d+)/i);
+    if (match) {
+      const idx = parseInt(match[1], 10) - 1; // Convert to 0-based index
+      console.log('Parsed from title:', stageTitle, '-> speaker index', idx);
+      return idx;
+    }
+    
+    // 4. Try to extract number from anywhere in title
+    const numMatch = stageTitle.match(/(\d+)/);
+    if (numMatch && stageTitle.toLowerCase().includes('keynote')) {
+      const idx = parseInt(numMatch[1], 10) - 1;
+      console.log('Extracted number from title:', stageTitle, '-> speaker index', idx);
+      return idx;
+    }
+    
+    // 5. Default to first speaker
+    console.log('Defaulting to speaker 0 for title:', stageTitle);
+    return 0;
+  }, [keynoteConfig, stageTitle, stageId, assetSpeakers]);
+
+  // Get current speaker based on index
+  const currentSpeaker = useMemo(() => {
+    if (assetSpeakers.length > 0 && assetSpeakers[speakerIndex]) {
+      console.log('Showing speaker:', assetSpeakers[speakerIndex].name, 'at index', speakerIndex);
+      return assetSpeakers[speakerIndex];
+    }
+    if (dbSpeakers[speakerIndex]) {
+      return dbSpeakers[speakerIndex];
+    }
+    return null;
+  }, [assetSpeakers, dbSpeakers, speakerIndex]);
 
   useEffect(() => {
     const loadSpeakers = async () => {
@@ -23,26 +74,31 @@ export function KeynoteScreen() {
         const speakerProfiles = (data.profiles || []).filter(
           (p: PersonProfile) => p.profileType === 'SPEAKER'
         );
-        setSpeakers(speakerProfiles);
-        if (speakerProfiles[speakerIndex]) {
-          setCurrentSpeaker(speakerProfiles[speakerIndex]);
-        }
+        setDbSpeakers(speakerProfiles);
       } catch (error) {
         console.error('Failed to load speakers:', error);
       }
     };
     if (eventId) loadSpeakers();
-  }, [eventId, speakerIndex]);
+  }, [eventId]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-navy-950 via-navy-900 to-navy-950 relative overflow-hidden">
-      {/* Animated background elements */}
+    <div className="min-h-screen bg-navy-950 relative overflow-hidden">
+      {/* Background */}
       <div className="absolute inset-0 pointer-events-none">
+        {/* Blue gradient sweep */}
+        <div 
+          className="absolute top-0 right-0 w-[60%] h-full"
+          style={{
+            background: 'linear-gradient(135deg, transparent 0%, rgba(0, 85, 254, 0.15) 50%, rgba(0, 217, 255, 0.1) 100%)',
+          }}
+        />
+        
         {/* Spotlight effect */}
         <motion.div
           className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px]"
           style={{
-            background: 'radial-gradient(ellipse at center top, rgba(212, 175, 55, 0.15) 0%, transparent 70%)',
+            background: 'radial-gradient(ellipse at center top, rgba(0, 85, 254, 0.15) 0%, transparent 70%)',
           }}
           animate={{
             opacity: [0.5, 0.8, 0.5],
@@ -50,20 +106,10 @@ export function KeynoteScreen() {
           }}
           transition={{ duration: 4, repeat: Infinity }}
         />
-        
-        {/* Subtle grid pattern */}
-        <div 
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-            backgroundSize: '50px 50px',
-          }}
-        />
 
         {/* Floating orbs */}
         <motion.div
-          className="absolute top-1/4 left-1/4 w-[300px] h-[300px] rounded-full bg-primary/5 blur-[100px]"
+          className="absolute top-1/4 left-1/4 w-[300px] h-[300px] rounded-full bg-mcd-500/5 blur-[100px]"
           animate={{
             x: [0, 50, 0],
             y: [0, -30, 0],
@@ -71,7 +117,7 @@ export function KeynoteScreen() {
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
         />
         <motion.div
-          className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-gold-500/5 blur-[120px]"
+          className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-cyan-500/5 blur-[120px]"
           animate={{
             x: [0, -40, 0],
             y: [0, 40, 0],
@@ -98,39 +144,32 @@ export function KeynoteScreen() {
               >
                 {/* Decorative ring */}
                 <motion.div
-                  className="absolute -inset-4 rounded-full border-2 border-gold-500/30"
+                  className="absolute -inset-4 rounded-full border-2 border-mcd-500/30"
                   animate={{ rotate: 360 }}
                   transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
                 />
                 <motion.div
-                  className="absolute -inset-8 rounded-full border border-gold-500/10"
+                  className="absolute -inset-8 rounded-full border border-mcd-500/10"
                   animate={{ rotate: -360 }}
                   transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
                 />
                 
                 {/* Photo container */}
-                <div className="relative w-72 h-72 rounded-full overflow-hidden border-4 border-gold-500/50 shadow-2xl shadow-gold-500/20">
-                  {currentSpeaker.photoUrl ? (
+                <div className="relative w-72 h-72 rounded-full overflow-hidden border-4 border-mcd-500/50 shadow-2xl shadow-mcd-500/20">
+                  {(currentSpeaker.photo || currentSpeaker.photoUrl) ? (
                     <img
-                      src={currentSpeaker.photoUrl}
+                      src={currentSpeaker.photo || currentSpeaker.photoUrl}
                       alt={currentSpeaker.name}
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center">
-                      <span className="text-7xl font-bold text-navy-950">
+                    <div className="w-full h-full bg-gradient-to-br from-mcd-500 to-cyan-500 flex items-center justify-center">
+                      <span className="text-7xl font-bold text-white">
                         {currentSpeaker.name.charAt(0)}
                       </span>
                     </div>
                   )}
                   
-                  {/* Shine overlay */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent"
-                    initial={{ x: '-100%', y: '-100%' }}
-                    animate={{ x: '100%', y: '100%' }}
-                    transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
-                  />
                 </div>
 
                 {/* Microphone badge */}
@@ -138,9 +177,9 @@ export function KeynoteScreen() {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.8, type: 'spring' }}
-                  className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center shadow-lg"
+                  className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-mcd-500 to-cyan-500 flex items-center justify-center shadow-lg"
                 >
-                  <Mic className="w-8 h-8 text-navy-950" />
+                  <Mic className="w-8 h-8 text-white" />
                 </motion.div>
               </motion.div>
 
@@ -156,10 +195,10 @@ export function KeynoteScreen() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-gold-500/10 border border-gold-500/30 rounded-full mb-6"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-mcd-500/10 border border-mcd-500/30 rounded-full mb-6"
                 >
-                  <span className="w-2 h-2 rounded-full bg-gold-500 animate-pulse" />
-                  <span className="text-sm font-medium text-gold-400 uppercase tracking-wider">
+                  <span className="w-2 h-2 rounded-full bg-mcd-500 animate-pulse" />
+                  <span className="text-sm font-medium text-mcd-400 uppercase tracking-wider">
                     Keynote Speaker
                   </span>
                 </motion.div>
@@ -181,23 +220,23 @@ export function KeynoteScreen() {
                   transition={{ delay: 0.8 }}
                   className="mb-6"
                 >
-                  <p className="text-2xl text-gold-400 font-medium">{currentSpeaker.role}</p>
+                  <p className="text-2xl text-mcd-400 font-medium">{currentSpeaker.role}</p>
                   {currentSpeaker.company && (
                     <p className="text-xl text-muted-foreground">{currentSpeaker.company}</p>
                   )}
                 </motion.div>
 
                 {/* Bio */}
-                {currentSpeaker.bioShort && (
+                {(currentSpeaker.bio || currentSpeaker.bioShort) && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.9 }}
                     className="relative"
                   >
-                    <Quote className="absolute -left-8 -top-2 w-6 h-6 text-gold-500/30" />
+                    <Quote className="absolute -left-8 -top-2 w-6 h-6 text-mcd-500/30" />
                     <p className="text-lg text-muted-foreground leading-relaxed max-w-xl italic">
-                      {currentSpeaker.bioShort}
+                      {currentSpeaker.bio || currentSpeaker.bioShort}
                     </p>
                   </motion.div>
                 )}
@@ -207,13 +246,12 @@ export function KeynoteScreen() {
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: 1 }}
                   transition={{ delay: 1, duration: 0.8 }}
-                  className="mt-8 h-1 bg-gradient-to-r from-gold-500 via-gold-400 to-transparent origin-left max-w-xs"
+                  className="mt-8 h-1 bg-gradient-to-r from-mcd-500 via-cyan-500 to-transparent origin-left max-w-xs"
                 />
               </motion.div>
             </div>
           </motion.div>
         ) : (
-          // Loading/empty state
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -222,7 +260,7 @@ export function KeynoteScreen() {
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-              className="w-20 h-20 mx-auto mb-6 rounded-full border-4 border-gold-500/30 border-t-gold-500"
+              className="w-20 h-20 mx-auto mb-6 rounded-full border-4 border-mcd-500/30 border-t-mcd-500"
             />
             <h2 className="text-2xl font-bold text-muted-foreground">
               Keynote Starting Soon...
@@ -245,4 +283,3 @@ export function KeynoteScreen() {
     </div>
   );
 }
-

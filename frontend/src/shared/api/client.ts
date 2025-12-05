@@ -194,6 +194,8 @@ export const juryApi = {
   getScores: () => api.get<any[]>('/jury/scores'),
   submitScore: (teamId: string, criteriaScores: Array<{ criteriaId: string; score: number }>) =>
     api.post<any>(`/jury/scores/${teamId}`, { criteriaScores }),
+  submitSimpleScore: (teamId: string, score: number) =>
+    api.post<any>(`/jury/scores/${teamId}/simple`, { score }),
   getCurrentTeam: () => api.get<any>('/jury/current'),
   getCriteria: () => api.get<any[]>('/jury/criteria'),
 };

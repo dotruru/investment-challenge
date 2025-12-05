@@ -1,22 +1,25 @@
 import { motion } from 'framer-motion';
 import { Wine, Users, MessageCircle, QrCode, Heart, Sparkles } from 'lucide-react';
 
-// Partner logos
 const PARTNER_LOGOS = [
-  { name: 'MCD Edu', color: 'from-blue-400 to-blue-600' },
-  { name: 'Umushroom', color: 'from-green-400 to-green-600' },
-  { name: 'Bloomberg', color: 'from-orange-400 to-orange-600' },
-  { name: 'CFA UK', color: 'from-purple-400 to-purple-600' },
+  { name: 'MCD Edu', logo: '/assets/DATAROOM/SPONSOR LOGOS/1. ORGANISERS  (EVERYWHERE!)/MCD - White.png' },
+  { name: 'UMushroom', logo: '/assets/DATAROOM/SPONSOR LOGOS/1. ORGANISERS  (EVERYWHERE!)/umushroom_white.png' },
 ];
 
 export function NetworkingScreen() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-navy-950 via-navy-900 to-navy-950 relative overflow-hidden">
-      {/* Celebration background effects */}
+    <div className="min-h-screen bg-navy-950 relative overflow-hidden">
+      {/* Background */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Warm glow */}
+        <div 
+          className="absolute top-0 right-0 w-[60%] h-full"
+          style={{
+            background: 'linear-gradient(135deg, transparent 0%, rgba(0, 85, 254, 0.12) 50%, rgba(0, 217, 255, 0.08) 100%)',
+          }}
+        />
+        
         <motion.div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gold-500/10 rounded-full blur-[150px]"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-mcd-500/10 rounded-full blur-[150px]"
           animate={{ opacity: [0.3, 0.5, 0.3] }}
           transition={{ duration: 5, repeat: Infinity }}
         />
@@ -25,7 +28,7 @@ export function NetworkingScreen() {
         {Array.from({ length: 20 }).map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-gold-400/30 rounded-full"
+            className="absolute w-2 h-2 bg-mcd-400/30 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -57,16 +60,16 @@ export function NetworkingScreen() {
             transition={{ type: 'spring', delay: 0.2 }}
             className="inline-flex items-center gap-3 mb-6"
           >
-            <Sparkles className="w-10 h-10 text-gold-400" />
+            <Sparkles className="w-10 h-10 text-mcd-400" />
             <Heart className="w-8 h-8 text-red-400" />
-            <Sparkles className="w-10 h-10 text-gold-400" />
+            <Sparkles className="w-10 h-10 text-cyan-400" />
           </motion.div>
           
           <h1 className="text-7xl font-display mb-4">
             <span className="text-gradient">THANK YOU</span>
           </h1>
           <h2 className="text-3xl text-white/90 font-light">
-            for joining the UK Investment Challenge Finals!
+            for joining the UK Investment Competition Finals!
           </h2>
         </motion.div>
 
@@ -77,13 +80,12 @@ export function NetworkingScreen() {
           transition={{ delay: 0.4 }}
           className="grid grid-cols-3 gap-8 mb-16 max-w-4xl"
         >
-          {/* Card 1: Location */}
           <motion.div
             whileHover={{ y: -5 }}
-            className="bg-gradient-to-br from-card/80 to-card/40 backdrop-blur border border-gold-500/20 rounded-2xl p-6 text-center"
+            className="bg-navy-800/50 backdrop-blur border border-mcd-500/20 rounded-2xl p-6 text-center"
           >
-            <div className="w-16 h-16 mx-auto mb-4 bg-gold-500/20 rounded-full flex items-center justify-center">
-              <Wine className="w-8 h-8 text-gold-500" />
+            <div className="w-16 h-16 mx-auto mb-4 bg-mcd-500/20 rounded-full flex items-center justify-center">
+              <Wine className="w-8 h-8 text-mcd-400" />
             </div>
             <h3 className="text-xl font-bold mb-2">Apéro & Drinks</h3>
             <p className="text-muted-foreground text-sm">
@@ -91,13 +93,12 @@ export function NetworkingScreen() {
             </p>
           </motion.div>
 
-          {/* Card 2: Meet People */}
           <motion.div
             whileHover={{ y: -5 }}
-            className="bg-gradient-to-br from-card/80 to-card/40 backdrop-blur border border-gold-500/20 rounded-2xl p-6 text-center"
+            className="bg-navy-800/50 backdrop-blur border border-cyan-500/20 rounded-2xl p-6 text-center"
           >
-            <div className="w-16 h-16 mx-auto mb-4 bg-blue-500/20 rounded-full flex items-center justify-center">
-              <Users className="w-8 h-8 text-blue-500" />
+            <div className="w-16 h-16 mx-auto mb-4 bg-cyan-500/20 rounded-full flex items-center justify-center">
+              <Users className="w-8 h-8 text-cyan-400" />
             </div>
             <h3 className="text-xl font-bold mb-2">Meet the Teams</h3>
             <p className="text-muted-foreground text-sm">
@@ -105,13 +106,12 @@ export function NetworkingScreen() {
             </p>
           </motion.div>
 
-          {/* Card 3: Feedback */}
           <motion.div
             whileHover={{ y: -5 }}
-            className="bg-gradient-to-br from-card/80 to-card/40 backdrop-blur border border-gold-500/20 rounded-2xl p-6 text-center"
+            className="bg-navy-800/50 backdrop-blur border border-green-500/20 rounded-2xl p-6 text-center"
           >
             <div className="w-16 h-16 mx-auto mb-4 bg-green-500/20 rounded-full flex items-center justify-center">
-              <MessageCircle className="w-8 h-8 text-green-500" />
+              <MessageCircle className="w-8 h-8 text-green-400" />
             </div>
             <h3 className="text-xl font-bold mb-2">Share Feedback</h3>
             <p className="text-muted-foreground text-sm">
@@ -127,13 +127,13 @@ export function NetworkingScreen() {
           transition={{ delay: 0.6 }}
           className="flex items-center gap-8 mb-16"
         >
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6 text-center">
+          <div className="bg-navy-800/50 border border-white/10 rounded-xl p-6 text-center">
             <div className="w-24 h-24 mx-auto mb-3 bg-white rounded-lg flex items-center justify-center">
               <QrCode className="w-16 h-16 text-navy-950" />
             </div>
             <p className="text-sm text-muted-foreground">Feedback Form</p>
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6 text-center">
+          <div className="bg-navy-800/50 border border-white/10 rounded-xl p-6 text-center">
             <div className="w-24 h-24 mx-auto mb-3 bg-white rounded-lg flex items-center justify-center">
               <QrCode className="w-16 h-16 text-navy-950" />
             </div>
@@ -149,18 +149,22 @@ export function NetworkingScreen() {
           className="text-center"
         >
           <p className="text-sm text-muted-foreground mb-6">
-            Special thanks to our partners and supporters
+            Special thanks to our partners and organisers
           </p>
-          <div className="flex justify-center items-center gap-6">
+          <div className="flex justify-center items-center gap-8">
             {PARTNER_LOGOS.map((partner, idx) => (
               <motion.div
                 key={partner.name}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 1 + idx * 0.1 }}
-                className={`w-28 h-12 bg-gradient-to-br ${partner.color} rounded-lg flex items-center justify-center shadow-lg`}
+                className="h-12 flex items-center justify-center"
               >
-                <span className="font-bold text-white text-xs">{partner.name}</span>
+                <img 
+                  src={partner.logo} 
+                  alt={partner.name} 
+                  className="h-full w-auto object-contain max-w-[140px]"
+                />
               </motion.div>
             ))}
           </div>
@@ -179,4 +183,3 @@ export function NetworkingScreen() {
     </div>
   );
 }
-

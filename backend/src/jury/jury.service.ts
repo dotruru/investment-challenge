@@ -146,6 +146,67 @@ export class JuryService {
     return result;
   }
 
+  // Simplified scoring: single 0-100 score
+  async submitSimpleScore(juryId: string, teamId: string, score: number) {
+    const profile = await this.prisma.personProfile.findUnique({
+      where: { id: juryId },
+      select: { eventId: true, name: true },
+    });
+
+    if (!profile) {
+      throw new NotFoundException('Jury profile not found');
+    }
+
+    // Validate score range
+    if (score < 0 || score > 100) {
+      throw new Error('Score must be between 0 and 100');
+    }
+
+    // Check if awards are locked
+    const liveState = await this.prisma.liveState.findUnique({
+      where: { eventId: profile.eventId },
+    });
+
+    if (liveState?.awardsLocked) {
+      throw new Error('Results have been locked. Scoring is no longer allowed.');
+    }
+
+    // Upsert the simple score directly
+    const teamScore = await this.prisma.teamScore.upsert({
+      where: {
+        teamId_juryId: { teamId, juryId },
+      },
+      create: {
+        teamId,
+        juryId,
+        criteriaScores: { simple: score },
+        totalScore: score,
+      },
+      update: {
+        criteriaScores: { simple: score },
+        totalScore: score,
+        submittedAt: new Date(),
+      },
+    });
+
+    // Notify operator of score submission
+    this.eventGateway.broadcastScoreSubmitted(profile.eventId, {
+      teamId,
+      juryId,
+      juryName: profile.name,
+      score,
+    });
+
+    return {
+      success: true,
+      score: {
+        teamId,
+        score,
+        submittedAt: teamScore.submittedAt,
+      },
+    };
+  }
+
   async getCurrentTeam(juryId: string) {
     const profile = await this.prisma.personProfile.findUnique({
       where: { id: juryId },

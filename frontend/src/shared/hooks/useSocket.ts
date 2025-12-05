@@ -35,7 +35,7 @@ export function useSocket({ eventId, clientType, juryId, onReconnect }: UseSocke
   } = useLiveStateStore();
 
   const connect = useCallback(() => {
-    const url = import.meta.env.VITE_WS_URL || 'http://localhost:3001';
+    const url = import.meta.env.VITE_WS_URL || 'http://localhost:3000';
 
     const socket = io(`${url}/event`, {
       query: {

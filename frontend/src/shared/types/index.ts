@@ -7,6 +7,7 @@ export type StageType =
   | 'WELCOME'
   | 'JURY_REVEAL'
   | 'ROUND'
+  | 'TEAM_TRANSITION'
   | 'BREAK'
   | 'KEYNOTE'
   | 'AWARDS'

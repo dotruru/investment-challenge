@@ -171,7 +171,7 @@ export class EventGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   // Score submitted broadcast (to operator only)
-  broadcastScoreSubmitted(eventId: string, data: { teamId: string; juryId: string; juryName: string }) {
+  broadcastScoreSubmitted(eventId: string, data: { teamId: string; juryId: string; juryName: string; score?: number }) {
     this.server.to(`event:${eventId}:operator`).emit('score:submitted', data);
   }
 }

@@ -28,13 +28,13 @@ export class EventsController {
   }
 
   @Get()
-  @Roles('admin', 'operator')
+  @Public()
   findAll() {
     return this.eventsService.findAll();
   }
 
   @Get(':id')
-  @Roles('admin', 'operator')
+  @Public()
   findOne(@Param('id') id: string) {
     return this.eventsService.findOne(id);
   }

@@ -4,13 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "dev:admin": "vite --mode admin",
+    "dev": "vite --mode operator",
     "dev:operator": "vite --mode operator",
     "dev:audience": "vite --mode audience",
     "dev:jury": "vite --mode jury",
+    "dev:all": "concurrently \"npm run dev:operator\" \"npm run dev:audience\" \"npm run dev:jury\"",
     "build": "tsc && vite build",
-    "build:admin": "tsc && vite build --mode admin",
     "build:operator": "tsc && vite build --mode operator",
     "build:audience": "tsc && vite build --mode audience",
     "build:jury": "tsc && vite build --mode jury",
@@ -48,6 +47,7 @@
     "@typescript-eslint/parser": "^6.18.1",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.16",
+    "concurrently": "^9.2.1",
     "eslint": "^8.56.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
@@ -57,4 +57,3 @@
     "vite": "^5.0.11"
   }
 }
-

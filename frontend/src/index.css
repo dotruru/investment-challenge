@@ -2,67 +2,96 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import Google Fonts - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+/* Custom font face for Horizon (fallback to system fonts if not available) */
+@font-face {
+  font-family: 'Horizon';
+  src: local('Horizon'), local('Horizon-Regular');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Horizon';
+  src: local('Horizon Bold'), local('Horizon-Bold');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* TT Interphases fallback */
+@font-face {
+  font-family: 'TT Interphases';
+  src: local('TT Interphases'), local('TTInterphases-Regular');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
-    --background: 222 47% 11%;
+    --background: 228 50% 4%;
     --foreground: 210 40% 98%;
 
-    --card: 222 47% 14%;
+    --card: 228 40% 8%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222 47% 11%;
+    --popover: 228 50% 4%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 47 95% 53%;
-    --primary-foreground: 222 47% 11%;
+    --primary: 220 100% 50%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217 33% 17%;
+    --secondary: 228 30% 12%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 228 30% 15%;
+    --muted-foreground: 215 20% 55%;
 
-    --accent: 217 33% 17%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 187 100% 50%;
+    --accent-foreground: 228 50% 4%;
 
     --destructive: 0 62% 50%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217 33% 20%;
-    --input: 217 33% 20%;
-    --ring: 47 95% 53%;
+    --border: 228 20% 18%;
+    --input: 228 20% 18%;
+    --ring: 220 100% 50%;
 
     --radius: 0.75rem;
   }
 
   .light {
     --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    --foreground: 228 50% 4%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 228 50% 4%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 228 50% 4%;
 
-    --primary: 47 95% 53%;
-    --primary-foreground: 222 47% 11%;
+    --primary: 220 100% 50%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary-foreground: 228 50% 4%;
 
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
 
-    --accent: 210 40% 96%;
-    --accent-foreground: 222 47% 11%;
+    --accent: 187 100% 50%;
+    --accent-foreground: 228 50% 4%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 47 95% 53%;
+    --ring: 220 100% 50%;
   }
 }
 
@@ -73,23 +102,32 @@
   
   body {
     @apply bg-background text-foreground;
-    font-family: 'Outfit', system-ui, sans-serif;
+    font-family: 'Poppins', 'TT Interphases', 'Helvetica Neue', system-ui, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Outfit', system-ui, sans-serif;
+    font-family: 'Poppins', 'TT Interphases', system-ui, sans-serif;
     font-weight: 700;
   }
 
   .font-display {
-    font-family: 'Bebas Neue', system-ui, sans-serif;
+    font-family: 'Horizon', 'Poppins', system-ui, sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 }
 
 @layer utilities {
+  /* MCD Blue gradient text */
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-gold-400 to-gold-600;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-mcd-500 to-cyan-400;
+  }
+
+  /* Alternative gradient with just blue */
+  .text-gradient-blue {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-mcd-400 to-mcd-600;
   }
 
   .card-shine {
@@ -107,12 +145,25 @@
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(255, 255, 255, 0.1),
+      rgba(0, 85, 254, 0.1),
       transparent
     );
     animation: shimmer 2s infinite;
   }
 
+  .glow-blue {
+    box-shadow: 0 0 20px 5px rgba(0, 85, 254, 0.3);
+  }
+
+  .glow-blue-intense {
+    box-shadow: 0 0 40px 10px rgba(0, 85, 254, 0.5);
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 20px 5px rgba(0, 217, 255, 0.3);
+  }
+
+  /* Keep gold glows for awards */
   .glow-gold {
     box-shadow: 0 0 20px 5px rgba(234, 179, 8, 0.3);
   }
@@ -144,7 +195,7 @@
     position: fixed;
     inset: 0;
     z-index: 9999;
-    overflow: hidden;
+    overflow: auto;
   }
 }
 
@@ -172,3 +223,184 @@
   overflow: hidden;
 }
 
+/* Logo Carousel / Ticker Animation */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+.logo-carousel-container {
+  width: 100%;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+}
+
+.logo-carousel-track {
+  display: flex;
+  width: fit-content;
+  animation: scroll-left linear infinite;
+}
+
+.logo-carousel-track:hover {
+  animation-play-state: paused;
+}
+
+/* ========================================
+   PARTICLE NETWORK BACKGROUND
+   MCD Capital inspired (blue/cyan)
+   ======================================== */
+
+.particle-network {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Individual particles */
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(0, 85, 254, 0.6);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 85, 254, 0.4);
+}
+
+.particle.cyan {
+  background: rgba(0, 217, 255, 0.5);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+}
+
+/* Particle drift animation */
+@keyframes particle-drift-1 {
+  0%, 100% { transform: translate(0, 0); opacity: 0.4; }
+  25% { transform: translate(30px, -20px); opacity: 0.8; }
+  50% { transform: translate(60px, 10px); opacity: 0.5; }
+  75% { transform: translate(20px, 30px); opacity: 0.7; }
+}
+
+@keyframes particle-drift-2 {
+  0%, 100% { transform: translate(0, 0); opacity: 0.5; }
+  25% { transform: translate(-40px, 30px); opacity: 0.7; }
+  50% { transform: translate(-20px, -40px); opacity: 0.4; }
+  75% { transform: translate(30px, -10px); opacity: 0.8; }
+}
+
+@keyframes particle-drift-3 {
+  0%, 100% { transform: translate(0, 0); opacity: 0.6; }
+  33% { transform: translate(50px, 40px); opacity: 0.4; }
+  66% { transform: translate(-30px, 20px); opacity: 0.8; }
+}
+
+.particle.drift-1 { animation: particle-drift-1 12s ease-in-out infinite; }
+.particle.drift-2 { animation: particle-drift-2 15s ease-in-out infinite; }
+.particle.drift-3 { animation: particle-drift-3 18s ease-in-out infinite; }
+
+/* Connecting lines between particles */
+.particle-line {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(0, 85, 254, 0.2), 
+    rgba(0, 217, 255, 0.15), 
+    transparent
+  );
+  transform-origin: left center;
+}
+
+@keyframes line-pulse {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.3; }
+}
+
+.particle-line {
+  animation: line-pulse 4s ease-in-out infinite;
+}
+
+/* ========================================
+   GLOW PULSE FOR INDUSTRY PARTNERS
+   ======================================== */
+
+@keyframes glow-pulse {
+  0%, 100% { 
+    filter: drop-shadow(0 0 8px rgba(0, 85, 254, 0.3));
+  }
+  50% { 
+    filter: drop-shadow(0 0 20px rgba(0, 85, 254, 0.6)) drop-shadow(0 0 40px rgba(0, 217, 255, 0.3));
+  }
+}
+
+.glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* Staggered glow for multiple items */
+.glow-pulse-1 { animation: glow-pulse 3s ease-in-out infinite; animation-delay: 0s; }
+.glow-pulse-2 { animation: glow-pulse 3s ease-in-out infinite; animation-delay: 0.6s; }
+.glow-pulse-3 { animation: glow-pulse 3s ease-in-out infinite; animation-delay: 1.2s; }
+.glow-pulse-4 { animation: glow-pulse 3s ease-in-out infinite; animation-delay: 1.8s; }
+.glow-pulse-5 { animation: glow-pulse 3s ease-in-out infinite; animation-delay: 2.4s; }
+
+/* ========================================
+   FLOATING / BREATHING ANIMATION
+   ======================================== */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes float-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-float-subtle {
+  animation: float-subtle 5s ease-in-out infinite;
+}
+
+/* Staggered floating for organic feel */
+.float-delay-1 { animation-delay: 0s; }
+.float-delay-2 { animation-delay: 0.5s; }
+.float-delay-3 { animation-delay: 1s; }
+.float-delay-4 { animation-delay: 1.5s; }
+.float-delay-5 { animation-delay: 2s; }
+.float-delay-6 { animation-delay: 2.5s; }
+
+/* Combined floating + glow for industry partners */
+@keyframes float-glow {
+  0%, 100% { 
+    transform: translateY(0);
+    filter: drop-shadow(0 0 8px rgba(0, 85, 254, 0.2));
+  }
+  50% { 
+    transform: translateY(-6px);
+    filter: drop-shadow(0 0 16px rgba(0, 85, 254, 0.5)) drop-shadow(0 0 30px rgba(0, 217, 255, 0.2));
+  }
+}
+
+.animate-float-glow {
+  animation: float-glow 4s ease-in-out infinite;
+}

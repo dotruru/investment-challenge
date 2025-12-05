@@ -6,20 +6,19 @@ import { useSocket } from '@/shared/hooks/useSocket';
 import { useLiveStateStore } from '@/shared/stores/liveStateStore';
 import { juryApi } from '@/shared/api/client';
 import { Button } from '@/shared/components/ui/button';
-import type { Team, ScoringCriteria } from '@/shared/types';
+import type { Team } from '@/shared/types';
 
 interface ScoreRecord {
   teamId: string;
-  criteriaScores: Record<string, number>;
+  score: number;
   submittedAt?: string;
 }
 
 export function JuryScoringPage() {
   const { user, logout } = useAuthStore();
   const [teams, setTeams] = useState<Team[]>([]);
-  const [criteria, setCriteria] = useState<ScoringCriteria[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
-  const [scores, setScores] = useState<Record<string, number>>({});
+  const [score, setScore] = useState<number>(50);
   const [existingScores, setExistingScores] = useState<ScoreRecord[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,14 +39,18 @@ export function JuryScoringPage() {
 
   const loadData = async () => {
     try {
-      const [teamsData, criteriaData, scoresData] = await Promise.all([
+      const [teamsData, scoresData] = await Promise.all([
         juryApi.getTeams(),
-        juryApi.getCriteria(),
         juryApi.getScores(),
       ]);
       setTeams(teamsData);
-      setCriteria(criteriaData);
-      setExistingScores(scoresData || []);
+      // Transform old format to simple score
+      const simplifiedScores = (scoresData || []).map((s: any) => ({
+        teamId: s.teamId,
+        score: s.totalScore || Object.values(s.criteriaScores || {})[0] || 50,
+        submittedAt: s.submittedAt,
+      }));
+      setExistingScores(simplifiedScores);
     } catch (error) {
       console.error('Failed to load data:', error);
     } finally {
@@ -57,42 +60,17 @@ export function JuryScoringPage() {
 
   // Get score status for a team
   const getTeamScoreStatus = (teamId: string) => {
-    const score = existingScores.find(s => s.teamId === teamId);
+    const scoreRecord = existingScores.find(s => s.teamId === teamId);
     return {
-      hasScored: !!score,
-      score: score,
+      hasScored: !!scoreRecord,
+      score: scoreRecord?.score,
     };
   };
 
   const handleSelectTeam = (team: Team) => {
     setSelectedTeam(team);
-    
-    // Load existing scores or initialize with defaults
     const existingScore = existingScores.find(s => s.teamId === team.id);
-    if (existingScore?.criteriaScores) {
-      setScores(existingScore.criteriaScores);
-    } else {
-      const initialScores: Record<string, number> = {};
-      criteria.forEach((c) => {
-        initialScores[c.id] = Math.ceil(c.maxScore / 2); // Default to middle value
-      });
-      setScores(initialScores);
-    }
-  };
-
-  const handleScoreChange = (criteriaId: string, score: number) => {
-    setScores((prev) => ({
-      ...prev,
-      [criteriaId]: score,
-    }));
-  };
-
-  const handleResetScores = () => {
-    const initialScores: Record<string, number> = {};
-    criteria.forEach((c) => {
-      initialScores[c.id] = Math.ceil(c.maxScore / 2);
-    });
-    setScores(initialScores);
+    setScore(existingScore?.score || 50);
   };
 
   const handleSubmit = async () => {
@@ -101,19 +79,15 @@ export function JuryScoringPage() {
     setIsSubmitting(true);
 
     try {
-      const criteriaScores = Object.entries(scores).map(([criteriaId, score]) => ({
-        criteriaId,
-        score,
-      }));
-
-      await juryApi.submitScore(selectedTeam.id, criteriaScores);
+      // Submit as simple score (backend will handle)
+      await juryApi.submitSimpleScore(selectedTeam.id, score);
       
       // Update existing scores
       setExistingScores(prev => {
         const filtered = prev.filter(s => s.teamId !== selectedTeam.id);
         return [...filtered, {
           teamId: selectedTeam.id,
-          criteriaScores: scores,
+          score: score,
           submittedAt: new Date().toISOString(),
         }];
       });
@@ -127,17 +101,20 @@ export function JuryScoringPage() {
     }
   };
 
-  // Calculate total weighted score
-  const totalScore = useMemo(() => {
-    if (!criteria.length) return 0;
-    let total = 0;
-    let maxPossible = 0;
-    criteria.forEach((c) => {
-      total += (scores[c.id] || 0) * c.weight;
-      maxPossible += c.maxScore * c.weight;
-    });
-    return { total: total.toFixed(1), max: maxPossible.toFixed(1), percentage: ((total / maxPossible) * 100).toFixed(0) };
-  }, [scores, criteria]);
+  // Get score color based on value
+  const getScoreColor = (value: number) => {
+    if (value >= 80) return 'text-green-500';
+    if (value >= 60) return 'text-cyan-400';
+    if (value >= 40) return 'text-yellow-500';
+    return 'text-red-500';
+  };
+
+  const getScoreGradient = (value: number) => {
+    if (value >= 80) return 'from-green-500 to-emerald-400';
+    if (value >= 60) return 'from-cyan-500 to-blue-400';
+    if (value >= 40) return 'from-yellow-500 to-orange-400';
+    return 'from-red-500 to-rose-400';
+  };
 
   // Separate scored and unscored teams
   const { scoredTeams, unscoredTeams } = useMemo(() => {
@@ -208,7 +185,7 @@ export function JuryScoringPage() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="bg-gradient-to-r from-primary/20 to-gold-500/20 border-b border-primary/30 overflow-hidden"
+            className="bg-gradient-to-r from-mcd-500/20 to-cyan-500/20 border-b border-mcd-500/30 overflow-hidden"
           >
             <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -246,7 +223,7 @@ export function JuryScoringPage() {
       <main className="max-w-4xl mx-auto p-6">
         <AnimatePresence mode="wait">
           {selectedTeam ? (
-            // Scoring Form
+            // Scoring Form - SIMPLIFIED to single 0-100 score
             <motion.div
               key="scoring-form"
               initial={{ opacity: 0, x: 50 }}
@@ -258,7 +235,7 @@ export function JuryScoringPage() {
               <div className="bg-card border border-border rounded-xl p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-gold-400 to-gold-600 rounded-xl flex items-center justify-center text-2xl font-bold text-navy-950">
+                    <div className="w-16 h-16 bg-gradient-to-br from-mcd-500 to-cyan-500 rounded-xl flex items-center justify-center text-2xl font-bold text-white">
                       {selectedTeam.name.charAt(0)}
                     </div>
                     <div>
@@ -273,89 +250,110 @@ export function JuryScoringPage() {
                 </div>
               </div>
 
-              {/* Score Preview */}
-              <div className="bg-gradient-to-br from-primary/10 to-gold-500/10 border border-primary/20 rounded-xl p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Total Weighted Score</p>
-                    <p className="text-4xl font-bold">
-                      <span className="text-primary">{totalScore.total}</span>
-                      <span className="text-xl text-muted-foreground">/{totalScore.max}</span>
-                    </p>
+              {/* Score Display - Large & Centered */}
+              <div className={`bg-gradient-to-br ${getScoreGradient(score)}/10 border border-${getScoreColor(score).replace('text-', '')}/30 rounded-2xl p-8`}>
+                <div className="text-center mb-8">
+                  <p className="text-lg text-muted-foreground mb-2">Your Score</p>
+                  <motion.div
+                    key={score}
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: 1 }}
+                    className={`text-9xl font-bold ${getScoreColor(score)} tabular-nums`}
+                  >
+                    {score}
+                  </motion.div>
+                  <p className="text-2xl text-muted-foreground mt-2">out of 100</p>
+                </div>
+
+                {/* Score Slider */}
+                <div className="max-w-2xl mx-auto">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={score}
+                    onChange={(e) => setScore(parseInt(e.target.value))}
+                    className="w-full h-4 bg-secondary rounded-full appearance-none cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${score}%, hsl(var(--secondary)) ${score}%, hsl(var(--secondary)) 100%)`,
+                    }}
+                  />
+                  
+                  {/* Score markers */}
+                  <div className="flex justify-between mt-4 px-1">
+                    {[0, 25, 50, 75, 100].map((marker) => (
+                      <button
+                        key={marker}
+                        onClick={() => setScore(marker)}
+                        className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+                          score === marker
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-secondary text-muted-foreground hover:bg-secondary/80'
+                        }`}
+                      >
+                        {marker}
+                      </button>
+                    ))}
                   </div>
-                  <div className="text-right">
-                    <div className="text-5xl font-bold text-primary">{totalScore.percentage}%</div>
+
+                  {/* Quick score buttons */}
+                  <div className="flex justify-center gap-3 mt-6">
                     <button
-                      onClick={handleResetScores}
-                      className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 mt-2"
+                      onClick={() => setScore(Math.max(0, score - 10))}
+                      className="px-4 py-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500/30 transition-colors"
                     >
-                      <RotateCcw className="w-3 h-3" />
+                      -10
+                    </button>
+                    <button
+                      onClick={() => setScore(Math.max(0, score - 5))}
+                      className="px-4 py-2 bg-orange-500/20 text-orange-500 rounded-lg hover:bg-orange-500/30 transition-colors"
+                    >
+                      -5
+                    </button>
+                    <button
+                      onClick={() => setScore(50)}
+                      className="px-4 py-2 bg-secondary text-muted-foreground rounded-lg hover:bg-secondary/80 transition-colors flex items-center gap-1"
+                    >
+                      <RotateCcw className="w-4 h-4" />
                       Reset
+                    </button>
+                    <button
+                      onClick={() => setScore(Math.min(100, score + 5))}
+                      className="px-4 py-2 bg-cyan-500/20 text-cyan-500 rounded-lg hover:bg-cyan-500/30 transition-colors"
+                    >
+                      +5
+                    </button>
+                    <button
+                      onClick={() => setScore(Math.min(100, score + 10))}
+                      className="px-4 py-2 bg-green-500/20 text-green-500 rounded-lg hover:bg-green-500/30 transition-colors"
+                    >
+                      +10
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* Criteria Sliders */}
-              <div className="bg-card border border-border rounded-xl divide-y divide-border">
-                {criteria.map((criterion, index) => (
-                  <motion.div
-                    key={criterion.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="p-6"
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <label className="font-semibold text-lg">{criterion.name}</label>
-                          <span className="text-xs px-2 py-0.5 bg-secondary rounded-full text-muted-foreground">
-                            Weight: {criterion.weight}x
-                          </span>
-                        </div>
-                        {criterion.description && (
-                          <p className="text-sm text-muted-foreground mt-1">{criterion.description}</p>
-                        )}
-                      </div>
-                      <div className="text-right">
-                        <span className="text-4xl font-bold text-primary tabular-nums">
-                          {scores[criterion.id] || Math.ceil(criterion.maxScore / 2)}
-                        </span>
-                        <span className="text-lg text-muted-foreground">/{criterion.maxScore}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="relative mt-4">
-                      <input
-                        type="range"
-                        min="1"
-                        max={criterion.maxScore}
-                        value={scores[criterion.id] || Math.ceil(criterion.maxScore / 2)}
-                        onChange={(e) => handleScoreChange(criterion.id, parseInt(e.target.value))}
-                        className="w-full h-3 bg-secondary rounded-lg appearance-none cursor-pointer slider-thumb"
-                        style={{
-                          background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${((scores[criterion.id] || Math.ceil(criterion.maxScore / 2)) / criterion.maxScore) * 100}%, hsl(var(--secondary)) ${((scores[criterion.id] || Math.ceil(criterion.maxScore / 2)) / criterion.maxScore) * 100}%, hsl(var(--secondary)) 100%)`,
-                        }}
-                      />
-                      <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                        {Array.from({ length: criterion.maxScore }, (_, i) => i + 1).map(n => (
-                          <button
-                            key={n}
-                            onClick={() => handleScoreChange(criterion.id, n)}
-                            className={`w-6 h-6 rounded-full transition-all ${
-                              scores[criterion.id] === n
-                                ? 'bg-primary text-primary-foreground font-bold'
-                                : 'hover:bg-secondary'
-                            }`}
-                          >
-                            {n}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+              {/* Score Guidelines */}
+              <div className="bg-card border border-border rounded-xl p-6">
+                <h3 className="font-semibold mb-4">Scoring Guide</h3>
+                <div className="grid grid-cols-4 gap-4 text-center text-sm">
+                  <div className="p-3 bg-red-500/10 rounded-lg">
+                    <p className="font-bold text-red-500">0-39</p>
+                    <p className="text-muted-foreground">Needs Work</p>
+                  </div>
+                  <div className="p-3 bg-yellow-500/10 rounded-lg">
+                    <p className="font-bold text-yellow-500">40-59</p>
+                    <p className="text-muted-foreground">Fair</p>
+                  </div>
+                  <div className="p-3 bg-cyan-500/10 rounded-lg">
+                    <p className="font-bold text-cyan-500">60-79</p>
+                    <p className="text-muted-foreground">Good</p>
+                  </div>
+                  <div className="p-3 bg-green-500/10 rounded-lg">
+                    <p className="font-bold text-green-500">80-100</p>
+                    <p className="text-muted-foreground">Excellent</p>
+                  </div>
+                </div>
               </div>
 
               {/* Submit Button */}
@@ -367,7 +365,7 @@ export function JuryScoringPage() {
                   onClick={() => setShowConfirmDialog(true)}
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? 'Submitting...' : 'Submit Scores'}
+                  {isSubmitting ? 'Submitting...' : `Submit Score: ${score}/100`}
                 </Button>
               </div>
             </motion.div>
@@ -421,7 +419,7 @@ export function JuryScoringPage() {
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-gradient-to-br from-gold-400 to-gold-600 rounded-lg flex items-center justify-center text-xl font-bold text-navy-950">
+                            <div className="w-12 h-12 bg-gradient-to-br from-mcd-500 to-cyan-500 rounded-lg flex items-center justify-center text-xl font-bold text-white">
                               {team.name.charAt(0)}
                             </div>
                             <div>
@@ -447,30 +445,35 @@ export function JuryScoringPage() {
                     Scored Teams ({scoredTeams.length})
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {scoredTeams.map((team) => (
-                      <motion.div
-                        key={team.id}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="bg-green-500/5 border border-green-500/30 rounded-xl p-4 cursor-pointer"
-                        onClick={() => handleSelectTeam(team)}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                              <Check className="w-6 h-6 text-green-500" />
+                    {scoredTeams.map((team) => {
+                      const teamScore = getTeamScoreStatus(team.id).score || 0;
+                      return (
+                        <motion.div
+                          key={team.id}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="bg-green-500/5 border border-green-500/30 rounded-xl p-4 cursor-pointer"
+                          onClick={() => handleSelectTeam(team)}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                                <span className={`text-xl font-bold ${getScoreColor(teamScore)}`}>
+                                  {teamScore}
+                                </span>
+                              </div>
+                              <div>
+                                <h3 className="font-semibold">{team.name}</h3>
+                                <p className="text-sm text-muted-foreground">
+                                  {team.university} • Round {team.roundAssignment}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <h3 className="font-semibold">{team.name}</h3>
-                              <p className="text-sm text-muted-foreground">
-                                {team.university} • Round {team.roundAssignment}
-                              </p>
-                            </div>
+                            <span className="text-sm text-green-500 font-medium">Edit</span>
                           </div>
-                          <span className="text-sm text-green-500 font-medium">Edit Score</span>
-                        </div>
-                      </motion.div>
-                    ))}
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -505,16 +508,13 @@ export function JuryScoringPage() {
               exit={{ scale: 0.9, opacity: 0 }}
               className="relative bg-card border border-border rounded-xl p-6 max-w-md w-full"
             >
-              <h3 className="text-xl font-bold mb-2">Confirm Submission</h3>
+              <h3 className="text-xl font-bold mb-2">Confirm Score</h3>
               <p className="text-muted-foreground mb-6">
-                Are you sure you want to submit your scores for <strong>{selectedTeam?.name}</strong>?
-                You can still edit your scores later if needed.
+                Submit score for <strong>{selectedTeam?.name}</strong>?
               </p>
-              <div className="bg-secondary/50 rounded-lg p-4 mb-6">
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground">Total Score</p>
-                  <p className="text-3xl font-bold text-primary">{totalScore.total}</p>
-                </div>
+              <div className="bg-secondary/50 rounded-lg p-6 mb-6 text-center">
+                <p className={`text-6xl font-bold ${getScoreColor(score)}`}>{score}</p>
+                <p className="text-muted-foreground mt-1">out of 100</p>
               </div>
               <div className="flex gap-3">
                 <Button variant="outline" className="flex-1" onClick={() => setShowConfirmDialog(false)}>
@@ -532,22 +532,22 @@ export function JuryScoringPage() {
       <style>{`
         input[type="range"]::-webkit-slider-thumb {
           -webkit-appearance: none;
-          width: 24px;
-          height: 24px;
+          width: 32px;
+          height: 32px;
           background: hsl(var(--primary));
           border-radius: 50%;
           cursor: pointer;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-          border: 3px solid white;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+          border: 4px solid white;
         }
         input[type="range"]::-moz-range-thumb {
-          width: 24px;
-          height: 24px;
+          width: 32px;
+          height: 32px;
           background: hsl(var(--primary));
           border-radius: 50%;
           cursor: pointer;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-          border: 3px solid white;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+          border: 4px solid white;
         }
       `}</style>
     </div>
