@@ -164,7 +164,6 @@ export function ShuffleAnimation({
   onShuffleComplete,
 }: ShuffleAnimationProps) {
   const [displayOrder, setDisplayOrder] = useState<string[]>(items.map((i) => i.id));
-  const [shuffleStep, setShuffleStep] = useState(0);
 
   useEffect(() => {
     if (isShuffling) {

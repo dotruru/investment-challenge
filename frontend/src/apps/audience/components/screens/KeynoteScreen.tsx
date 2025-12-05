@@ -156,9 +156,9 @@ export function KeynoteScreen() {
                 
                 {/* Photo container */}
                 <div className="relative w-72 h-72 rounded-full overflow-hidden border-4 border-mcd-500/50 shadow-2xl shadow-mcd-500/20">
-                  {(currentSpeaker.photo || currentSpeaker.photoUrl) ? (
+                  {((currentSpeaker as any).photo || (currentSpeaker as any).photoUrl) ? (
                     <img
-                      src={currentSpeaker.photo || currentSpeaker.photoUrl}
+                      src={(currentSpeaker as any).photo || (currentSpeaker as any).photoUrl}
                       alt={currentSpeaker.name}
                       className="w-full h-full object-cover"
                     />
@@ -227,7 +227,7 @@ export function KeynoteScreen() {
                 </motion.div>
 
                 {/* Bio */}
-                {(currentSpeaker.bio || currentSpeaker.bioShort) && (
+                {((currentSpeaker as any).bio || (currentSpeaker as any).bioShort) && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -236,7 +236,7 @@ export function KeynoteScreen() {
                   >
                     <Quote className="absolute -left-8 -top-2 w-6 h-6 text-mcd-500/30" />
                     <p className="text-lg text-muted-foreground leading-relaxed max-w-xl italic">
-                      {currentSpeaker.bio || currentSpeaker.bioShort}
+                      {(currentSpeaker as any).bio || (currentSpeaker as any).bioShort}
                     </p>
                   </motion.div>
                 )}

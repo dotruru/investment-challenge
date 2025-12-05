@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLiveStateStore } from '@/shared/stores/liveStateStore';
 import { useAssets } from '@/shared/hooks/useAssets';
-import { Users, TrendingUp, Award, Target, CheckCircle, Clock, Mic, ChevronLeft, ChevronRight, FileText, RotateCcw } from 'lucide-react';
+import { Users, TrendingUp, Award, Target, CheckCircle, Clock, Mic, FileText, RotateCcw } from 'lucide-react';
 import type { Team } from '@/shared/types';
 
 interface RoundScreenProps {
@@ -104,7 +104,6 @@ export function RoundScreen({ timer }: RoundScreenProps) {
 
 
   const completedTeams = state?.roundState?.teamsCompleted || [];
-  const totalTeamsInRound = allTeams.length || 5;
   const showingLineup = showLineup && !team;
 
   return (

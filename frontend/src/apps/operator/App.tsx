@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { OperatorControlPanel } from './pages/OperatorControlPanel';
 import { motion } from 'framer-motion';
 import { authApi, api } from '@/shared/api/client';

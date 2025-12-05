@@ -6,7 +6,7 @@ import type { Team } from '@/shared/types';
 
 export function TeamCardGridScreen() {
   const { eventId } = useParams<{ eventId: string }>();
-  const { state } = useLiveStateStore();
+  useLiveStateStore(); // Keep connection active
   const [teams, setTeams] = useState<Team[]>([]);
 
   useEffect(() => {
@@ -65,7 +65,7 @@ export function TeamCardGridScreen() {
             },
           }}
         >
-          {teams.map((team, index) => (
+          {teams.map((team) => (
             <motion.div
               key={team.id}
               variants={{

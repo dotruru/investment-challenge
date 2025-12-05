@@ -105,9 +105,9 @@ export function WelcomeScreen() {
                   />
                   
                   <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-mcd-500/30 shadow-2xl shadow-mcd-500/10">
-                    {host.photoUrl ? (
+                    {(host as any).photoUrl ? (
                       <img
-                        src={host.photoUrl}
+                        src={(host as any).photoUrl}
                         alt={host.name}
                         className="w-full h-full object-cover"
                       />

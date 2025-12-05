@@ -39,7 +39,7 @@ export function useSoundEffects(enabled: boolean = true) {
   }, [enabled]);
 
   // Generate a synthesized sound
-  const generateSound = useCallback((type: SoundType, options?: { duration?: number; frequency?: number }) => {
+  const generateSound = useCallback((type: SoundType, _options?: { duration?: number; frequency?: number }) => {
     if (!enabled || !audioContextRef.current || !gainNodeRef.current) return;
 
     const ctx = audioContextRef.current;

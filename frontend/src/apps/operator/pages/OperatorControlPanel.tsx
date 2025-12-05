@@ -170,7 +170,7 @@ export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanel
   // Round Controls
   const handleRandomizeRound = async (roundNumber: number) => {
     try {
-      const result = await operatorApi.randomizeRound(eventId, roundNumber);
+      await operatorApi.randomizeRound(eventId, roundNumber);
       await loadEventData();
     } catch (error) {
       console.error('Failed to randomize round:', error);

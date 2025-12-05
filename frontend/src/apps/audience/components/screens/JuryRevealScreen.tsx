@@ -170,7 +170,7 @@ export function JuryRevealScreen() {
             className="mt-8"
           >
             <div className="flex justify-center gap-4 flex-wrap">
-              {juryMembers.map((jury, idx) => {
+              {juryMembers.map((jury) => {
                 const isRevealed = revealedIds.has(jury.id);
                 const isCurrent = jury.id === currentJury?.id;
                 
