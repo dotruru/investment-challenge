@@ -176,7 +176,6 @@ export function ShuffleAnimation({
           // Random shuffle
           const shuffled = [...displayOrder].sort(() => Math.random() - 0.5);
           setDisplayOrder(shuffled);
-          setShuffleStep(step);
           step++;
         } else {
           // Final order
