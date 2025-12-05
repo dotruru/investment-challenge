@@ -20,7 +20,7 @@ RUN npx prisma generate
 COPY . .
 
 # Build the application
-RUN npm run build
+RUN npm run build && ls -la dist/
 
 # Production stage
 FROM node:18-slim AS runner
@@ -39,6 +39,9 @@ COPY --from=builder /app/prisma ./prisma
 # Expose port
 EXPOSE 3000
 
+# Verify files exist
+RUN ls -la dist/
+
 # Start command
-CMD ["sh", "-c", "npx prisma db push && node dist/main"]
+CMD ["sh", "-c", "npx prisma db push --skip-generate && node dist/main.js"]
 
