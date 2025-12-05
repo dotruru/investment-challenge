@@ -1,0 +1,9 @@
+{
+  "buildCommand": "npm run build:operator",
+  "outputDirectory": "dist/operator",
+  "framework": null,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+
