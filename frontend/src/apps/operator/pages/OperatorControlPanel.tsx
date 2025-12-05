@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, Pause, RotateCcw, ChevronRight, ChevronLeft, Shuffle, Users, Radio, Clock, Layers, 
-  CheckCircle, AlertCircle, Trophy, Sparkles, UserCheck, Eye, LogOut, ClipboardList, Save, BarChart3
+  CheckCircle, AlertCircle, Trophy, Sparkles, UserCheck, Eye, LogOut, ClipboardList, Save, BarChart3, Link2, Check
 } from 'lucide-react';
 import { useSocket } from '@/shared/hooks/useSocket';
 import { useLiveStateStore } from '@/shared/stores/liveStateStore';
@@ -42,6 +42,24 @@ export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanel
   const [showScoringPanel, setShowScoringPanel] = useState(false);
   const [teamScores, setTeamScores] = useState<Record<string, TeamScore>>({});
   const [savingScores, setSavingScores] = useState<Record<string, boolean>>({});
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  // Get audience URL - auto-derive from operator URL or use env var
+  const getAudienceUrl = () => {
+    if (import.meta.env.VITE_AUDIENCE_URL) {
+      return import.meta.env.VITE_AUDIENCE_URL;
+    }
+    // Auto-derive: ukic-operator.vercel.app -> ukic-audience.vercel.app
+    return window.location.origin.replace('-operator', '-audience').replace('operator', 'audience');
+  };
+
+  const audienceLink = `${getAudienceUrl()}/event/${eventId}`;
+
+  const copyAudienceLink = () => {
+    navigator.clipboard.writeText(audienceLink);
+    setLinkCopied(true);
+    setTimeout(() => setLinkCopied(false), 2000);
+  };
 
   // Animation states
   const animationState = state?.animationState || { step: 0, totalSteps: 0 };
@@ -324,12 +342,22 @@ export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanel
                 </span>
               )}
             </Button>
-            <a href={`${import.meta.env.VITE_AUDIENCE_URL || 'http://localhost:5102'}/event/${eventId}`} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" size="sm">
-                <Eye className="w-4 h-4 mr-2" />
-                Audience
+            <div className="flex items-center gap-1">
+              <a href={audienceLink} target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="sm">
+                  <Eye className="w-4 h-4 mr-2" />
+                  Audience
+                </Button>
+              </a>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={copyAudienceLink}
+                className={linkCopied ? 'bg-green-500/20 border-green-500/50' : ''}
+              >
+                {linkCopied ? <Check className="w-4 h-4 text-green-500" /> : <Link2 className="w-4 h-4" />}
               </Button>
-            </a>
+            </div>
             <Button variant="ghost" size="sm" onClick={onLogout}>
               <LogOut className="w-4 h-4" />
             </Button>
