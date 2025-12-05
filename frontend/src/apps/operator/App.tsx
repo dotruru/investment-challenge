@@ -85,7 +85,8 @@ function EventSelector({ onSelect, storedEventId }: { onSelect: (eventId: string
   const [invalidStoredEvent, setInvalidStoredEvent] = useState(false);
 
   useEffect(() => {
-    fetch('/api/v1/events')
+    const apiUrl = import.meta.env.VITE_API_URL || '/api/v1';
+    fetch(`${apiUrl}/events`)
       .then(res => res.json())
       .then(data => {
         setEvents(data);
