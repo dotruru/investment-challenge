@@ -59,9 +59,9 @@ function OperatorLogin({ onLogin }: { onLogin: () => void }) {
               type="password"
               value={pin}
               onChange={(e) => setPin(e.target.value)}
-              maxLength={4}
-              className="w-full text-center text-4xl tracking-[1em] px-4 py-6 bg-navy-900 border border-mcd-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-mcd-500/50 focus:border-mcd-500"
-              placeholder="••••"
+              maxLength={10}
+              className="w-full text-center text-4xl tracking-[0.5em] px-4 py-6 bg-navy-900 border border-mcd-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-mcd-500/50 focus:border-mcd-500"
+              placeholder="••••••"
               autoFocus
             />
 
