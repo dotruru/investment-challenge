@@ -7,31 +7,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
-  // Enable CORS with proper configuration
-  const allowedOriginsStr = configService.get<string>('ALLOWED_ORIGINS');
-  const allowedOrigins = allowedOriginsStr 
-    ? allowedOriginsStr.split(',').map(o => o.trim())
-    : ['http://localhost:5101', 'http://localhost:5102'];
-  
-  console.log('CORS allowed origins:', allowedOrigins);
-  
+  // Enable CORS - allow all origins
   app.enableCors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl)
-      if (!origin) return callback(null, true);
-      
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.log('CORS blocked origin:', origin);
-        callback(null, false);
-      }
-    },
+    origin: true,
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
   });
 
   // Global validation pipe
