@@ -184,23 +184,29 @@ export function LobbyScreen() {
 
       {/* ========== CONTENT ========== */}
       <div className="relative z-10">
-        
-        {/* UMushroom top right */}
-        <div className="absolute top-8 right-12">
-          {organisers[1] && (
-            <motion.img
-              src={organisers[1].logoDark}
-              alt={organisers[1].name}
-              className="h-14 w-auto opacity-70 hover:opacity-100 transition-opacity animate-float-subtle"
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 0.7, x: 0 }}
-              transition={{ delay: 0.3, duration: 0.8 }}
-            />
-          )}
-        </div>
 
         {/* Hero Section */}
-        <div className="pt-24 pb-12 px-12 text-center">
+        <div className="pt-16 pb-12 px-12 text-center">
+          
+          {/* Organisers logos centered above title */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            className="flex items-center justify-center gap-8 mb-8"
+          >
+            {organisers.map((org, idx) => (
+              <motion.img
+                key={org.name}
+                src={org.logoDark}
+                alt={org.name}
+                className="h-12 w-auto opacity-80 hover:opacity-100 transition-opacity"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 0.8, scale: 1 }}
+                transition={{ delay: 0.3 + idx * 0.1, duration: 0.6 }}
+              />
+            ))}
+          </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -359,32 +365,17 @@ export function LobbyScreen() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 2 }}
+            className="flex justify-center"
           >
-            <div className="flex items-center justify-center gap-8 mb-5">
-              <p className="text-lg text-muted-foreground">Organised by</p>
-              <div className="flex items-center gap-6">
-                {organisers.map((org, idx) => (
-                  <img
-                    key={org.name}
-                    src={org.logoDark}
-                    alt={org.name}
-                    className={`h-12 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity animate-float-subtle float-delay-${idx + 1}`}
-                  />
-                ))}
-              </div>
+            <div className="inline-flex items-center gap-4 px-8 py-3 bg-mcd-500/10 border border-mcd-500/30 rounded-full backdrop-blur-sm">
+              <motion.div
+                className="w-3 h-3 bg-mcd-500 rounded-full"
+                animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+              <span className="text-lg text-mcd-400">Event starting soon • Please take your seats</span>
             </div>
-
-            <div className="flex justify-center">
-              <div className="inline-flex items-center gap-4 px-8 py-3 bg-mcd-500/10 border border-mcd-500/30 rounded-full backdrop-blur-sm">
-            <motion.div
-              className="w-3 h-3 bg-mcd-500 rounded-full"
-              animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-                <span className="text-lg text-mcd-400">Event starting soon • Please take your seats</span>
-              </div>
-          </div>
-        </motion.div>
+          </motion.div>
         </div>
 
       </div>
