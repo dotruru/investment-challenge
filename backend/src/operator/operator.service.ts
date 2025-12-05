@@ -268,15 +268,15 @@ export class OperatorService {
       } else {
         // No current team, start with first
         nextTeamId = teams[0].id;
-      }
+    }
     }
 
     if (!nextTeamId) {
-      return {
-        success: false,
-        message: 'No more teams in this round',
-        liveState: state,
-      };
+    return {
+      success: false,
+      message: 'No more teams in this round',
+      liveState: state,
+    };
     }
 
     // Set the next team directly (skip transition for now to keep it simple)

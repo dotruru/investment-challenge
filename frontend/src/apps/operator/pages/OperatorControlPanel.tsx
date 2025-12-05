@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, Pause, RotateCcw, ChevronRight, ChevronLeft, Shuffle, Users, Radio, Clock, Layers, 
-  CheckCircle, AlertCircle, Trophy, Sparkles, UserCheck, Volume2, VolumeX, Eye, LogOut
+  CheckCircle, AlertCircle, Trophy, Sparkles, UserCheck, Eye, LogOut
 } from 'lucide-react';
 import { useSocket } from '@/shared/hooks/useSocket';
 import { useLiveStateStore } from '@/shared/stores/liveStateStore';
@@ -31,7 +31,6 @@ export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanel
   const [jury, setJury] = useState<PersonProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [scoringStatus, setScoringStatus] = useState<any>(null);
-  const [soundEnabled, setSoundEnabled] = useState(true);
 
   // Animation states
   const animationState = state?.animationState || { step: 0, totalSteps: 0 };
@@ -107,7 +106,6 @@ export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanel
   const handleStartTimer = async (type: 'presentation' | 'qa' | 'break', duration: number) => {
     try {
       await operatorApi.startTimer(eventId, type, duration);
-      if (soundEnabled) playSound('start');
     } catch (error) {
       console.error('Failed to start timer:', error);
     }
@@ -136,7 +134,6 @@ export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanel
   // Round Controls
   const handleRandomizeRound = async (roundNumber: number) => {
     try {
-      if (soundEnabled) playSound('shuffle');
       const result = await operatorApi.randomizeRound(eventId, roundNumber);
       await loadEventData();
     } catch (error) {
@@ -156,7 +153,6 @@ export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanel
   const handleTriggerAnimation = async (animation: string, params?: any) => {
     try {
       await operatorApi.triggerAnimation(eventId, animation, params);
-      if (soundEnabled) playSound('reveal');
     } catch (error) {
       console.error('Failed to trigger animation:', error);
     }
@@ -165,7 +161,6 @@ export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanel
   const handleNextAnimationStep = async () => {
     try {
       await operatorApi.nextAnimationStep(eventId);
-      if (soundEnabled) playSound('reveal');
     } catch (error) {
       console.error('Failed to advance animation:', error);
     }
@@ -175,17 +170,11 @@ export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanel
   const handleLockAwards = async () => {
     try {
       await operatorApi.lockAwards(eventId);
-      if (soundEnabled) playSound('victory');
     } catch (error) {
       console.error('Failed to lock awards:', error);
     }
   };
 
-  // Sound Effects
-  const playSound = (type: 'start' | 'reveal' | 'shuffle' | 'victory' | 'buzzer') => {
-    // Sound playback will be implemented with actual audio files
-    console.log(`Playing sound: ${type}`);
-  };
 
   const getTeamsByRound = (round: number) => {
     return teams
@@ -242,12 +231,6 @@ export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanel
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setSoundEnabled(!soundEnabled)}
-              className={`p-2 rounded-lg ${soundEnabled ? 'bg-primary/10 text-primary' : 'bg-secondary text-muted-foreground'}`}
-            >
-              {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-            </button>
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm ${
               connectionState.isConnected ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'
             }`}>

@@ -340,20 +340,20 @@ export function JuryScoringPage() {
                   <div className="p-3 bg-red-500/10 rounded-lg">
                     <p className="font-bold text-red-500">0-39</p>
                     <p className="text-muted-foreground">Needs Work</p>
-                  </div>
+                        </div>
                   <div className="p-3 bg-yellow-500/10 rounded-lg">
                     <p className="font-bold text-yellow-500">40-59</p>
                     <p className="text-muted-foreground">Fair</p>
-                  </div>
+                      </div>
                   <div className="p-3 bg-cyan-500/10 rounded-lg">
                     <p className="font-bold text-cyan-500">60-79</p>
                     <p className="text-muted-foreground">Good</p>
-                  </div>
+                      </div>
                   <div className="p-3 bg-green-500/10 rounded-lg">
                     <p className="font-bold text-green-500">80-100</p>
                     <p className="text-muted-foreground">Excellent</p>
-                  </div>
-                </div>
+                      </div>
+                    </div>
               </div>
 
               {/* Submit Button */}
@@ -448,30 +448,30 @@ export function JuryScoringPage() {
                     {scoredTeams.map((team) => {
                       const teamScore = getTeamScoreStatus(team.id).score || 0;
                       return (
-                        <motion.div
-                          key={team.id}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          className="bg-green-500/5 border border-green-500/30 rounded-xl p-4 cursor-pointer"
-                          onClick={() => handleSelectTeam(team)}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                              <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                      <motion.div
+                        key={team.id}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="bg-green-500/5 border border-green-500/30 rounded-xl p-4 cursor-pointer"
+                        onClick={() => handleSelectTeam(team)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
                                 <span className={`text-xl font-bold ${getScoreColor(teamScore)}`}>
                                   {teamScore}
                                 </span>
-                              </div>
-                              <div>
-                                <h3 className="font-semibold">{team.name}</h3>
-                                <p className="text-sm text-muted-foreground">
-                                  {team.university} • Round {team.roundAssignment}
-                                </p>
-                              </div>
                             </div>
-                            <span className="text-sm text-green-500 font-medium">Edit</span>
+                            <div>
+                              <h3 className="font-semibold">{team.name}</h3>
+                              <p className="text-sm text-muted-foreground">
+                                {team.university} • Round {team.roundAssignment}
+                              </p>
+                            </div>
                           </div>
-                        </motion.div>
+                            <span className="text-sm text-green-500 font-medium">Edit</span>
+                        </div>
+                      </motion.div>
                       );
                     })}
                   </div>

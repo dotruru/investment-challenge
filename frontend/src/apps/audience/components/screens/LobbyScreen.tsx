@@ -1,18 +1,38 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import type { Team } from '@/shared/types';
 import { useAssets } from '@/shared/hooks/useAssets';
 import { LogoCarousel, SimpleLogoCarousel } from '@/shared/components/ui/LogoCarousel';
 
-const FUNNY_QUOTES = [
-  "Buy low, sell high... if only it were that simple!",
-  "May your Sharpe ratio be ever in your favor",
-  "Remember: Past performance is not indicative... but it's all we've got!",
-  "The trend is your friend, until it isn't",
-  "Diversify they said. It'll be fun they said.",
-  "Warren Buffett never had to deal with meme stocks",
-  "Risk-adjusted returns: making losses sound sophisticated since 1966",
+const TEAM_QUOTES = [
+  { quote: "My mitigation strategy is: hedge, hope, pray", author: "SOLO YOLO" },
+  { quote: "Structured thinking wins.", author: "Andrei Khristoliubov" },
+  { quote: "Preparation is key", author: "Robert Zhulyev" },
+  { quote: "An investment in knowledge pays the best interest", author: "Benji Crawford" },
+  { quote: "A rising tide lifts all boats.", author: "Keshav Iyer" },
+  { quote: "Markets can stay irrational longer than you can stay solvent.", author: "Daksh Sargiya" },
+  { quote: "Numbers don't lie. People do.", author: "Aman Nagu" },
+  { quote: "Cynicism is a sign of weakness.", author: "David Drăghici" },
+  { quote: "Be a bit better everyday.", author: "Nicolae Darie-Nistor" },
+  { quote: "Tomorrow does not exist. There is only now.", author: "Robert Jacob Oros" },
+  { quote: "Battle scars from virtual capital prevent disasters with real capital.", author: "Hashim Ahmed" },
+  { quote: "Code finds patterns, discipline captures profits.", author: "Arjun Juneja" },
+  { quote: "Red is the new green.", author: "Dhriti Pareek" },
+  { quote: "Audere est facere.", author: "David Labella" },
+  { quote: "The best way to predict the future is to create it.", author: "Manraj Singh" },
+  { quote: "An investment in knowledge pays the best interest.", author: "Tariq Howlader" },
+  { quote: "I invest like I cook: a little messy, occasionally risky, but surprisingly effective.", author: "Sujay Aggarwal" },
+  { quote: "When it comes to investing, some losses may be inevitable, but losing your composure is always optional.", author: "Sushant Shyam" },
+  { quote: "In the midst of chaos, there is also opportunity.", author: "Aran Grant" },
+  { quote: "Identifying catalysts before the market prices them in.", author: "Muzamel" },
+  { quote: "Driving performance through rigorous research and disciplined allocation.", author: "Josh" },
+  { quote: "Leveraging geopolitical insights to uncover value.", author: "Kabir" },
+  { quote: "Buy the rumour, sell the news.", author: "Vadim Voloshin" },
+  { quote: "Fearful when others are greedy, greedy when others are fearful.", author: "Sidhanth Srikanth" },
+  { quote: "Price is what you pay, value is what you get.", author: "Jaime Sancho" },
+  { quote: "Clients rarely applaud you for making money, but they never hesitate to judge you when you lose it.", author: "Hugo" },
+  { quote: "Markets don't rise together, capital rotates, and outperformance belongs to those who move with the flow of money.", author: "Murathan" },
+  { quote: "Sustainable performance is built on small, repeated decisions done right.", author: "Can" },
+  { quote: "If only PDUFAs came with tracking numbers.", author: "Joaquim Silva" },
 ];
 
 // Generate particle positions (memoized)
@@ -51,45 +71,20 @@ function generateLines(particles: ReturnType<typeof generateParticles>) {
 }
 
 export function LobbyScreen() {
-  const { eventId } = useParams<{ eventId: string }>();
-  const [teams, setTeams] = useState<Team[]>([]);
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
-  const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
   const { partners, loading: assetsLoading } = useAssets();
 
   // Memoize particles and lines
   const particles = useMemo(() => generateParticles(25), []);
   const lines = useMemo(() => generateLines(particles), [particles]);
 
-  useEffect(() => {
-    const loadTeams = async () => {
-      try {
-        const response = await fetch(`/api/v1/events/${eventId}/display`);
-        const data = await response.json();
-        setTeams(data.teams || []);
-      } catch (error) {
-        console.error('Failed to load teams:', error);
-      }
-    };
-    if (eventId) loadTeams();
-  }, [eventId]);
-
   // Rotate quotes
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentQuoteIndex((prev) => (prev + 1) % FUNNY_QUOTES.length);
+      setCurrentQuoteIndex((prev) => (prev + 1) % TEAM_QUOTES.length);
     }, 5000);
     return () => clearInterval(interval);
   }, []);
-
-  // Rotate teams
-  useEffect(() => {
-    if (teams.length === 0) return;
-    const interval = setInterval(() => {
-      setCurrentTeamIndex((prev) => (prev + 1) % teams.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [teams.length]);
 
   // Get university logos for carousel
   const universityLogos = partners?.universities.map(u => ({
@@ -150,13 +145,13 @@ export function LobbyScreen() {
                 strokeWidth="1"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: [0.05, 0.2, 0.05] }}
-                transition={{
+          transition={{
                   duration: 4,
-                  repeat: Infinity,
+            repeat: Infinity,
                   delay: line.delay,
-                  ease: 'easeInOut',
-                }}
-              />
+            ease: 'easeInOut',
+          }}
+        />
             ))}
             <defs>
               <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -169,21 +164,21 @@ export function LobbyScreen() {
 
           {/* Particles */}
           {particles.map((p) => (
-            <motion.div
+          <motion.div
               key={p.id}
               className={`particle ${p.isCyan ? 'cyan' : ''} drift-${p.drift}`}
-              style={{
+            style={{
                 left: `${p.x}%`,
                 top: `${p.y}%`,
                 width: `${p.size}px`,
                 height: `${p.size}px`,
                 animationDelay: `${p.delay}s`,
-              }}
+            }}
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: p.delay * 0.2, duration: 1 }}
-            />
-          ))}
+          />
+        ))}
         </div>
       </div>
 
@@ -206,100 +201,75 @@ export function LobbyScreen() {
 
         {/* Hero Section */}
         <div className="pt-24 pb-12 px-12 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
-          >
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+        >
             <p className="text-2xl text-mcd-400 font-medium mb-4">5th December 2025</p>
             <h1 className="text-8xl md:text-9xl font-display tracking-wider mb-4">
-              <span className="text-gradient">GRAND FINALE</span>
-            </h1>
+            <span className="text-gradient">GRAND FINALE</span>
+          </h1>
             <h2 className="text-4xl md:text-5xl text-white/90 font-light">
-              UK Investment Competition
-            </h2>
-          </motion.div>
+            UK Investment Competition
+          </h2>
+        </motion.div>
         </div>
 
-        {/* Team Carousel */}
-        <div className="pb-8 px-12">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="h-20"
-          >
-            {teams.length > 0 && (
-              <motion.div
-                key={currentTeamIndex}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-center"
-              >
-                <p className="text-lg text-muted-foreground mb-2">Featuring</p>
-                <div className="flex items-center justify-center gap-5">
-                  <div className="w-14 h-14 bg-gradient-to-br from-mcd-500 to-cyan-500 rounded-xl flex items-center justify-center text-2xl font-bold text-white shadow-lg shadow-mcd-500/20">
-                    {teams[currentTeamIndex]?.name.charAt(0)}
-                  </div>
-                  <div className="text-left">
-                    <p className="text-2xl font-bold">{teams[currentTeamIndex]?.name}</p>
-                    <p className="text-lg text-muted-foreground">{teams[currentTeamIndex]?.university}</p>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </motion.div>
-        </div>
-
-        {/* Quote */}
+        {/* Heard from our teams + Quote */}
         <div className="pb-12 px-12">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
+            transition={{ delay: 0.5 }}
             className="max-w-3xl mx-auto text-center"
           >
-            <motion.p
+            <p className="text-lg text-muted-foreground mb-4">Heard from our teams</p>
+            <motion.div
               key={currentQuoteIndex}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-xl text-muted-foreground italic"
             >
-              "{FUNNY_QUOTES[currentQuoteIndex]}"
-            </motion.p>
+              <p className="text-xl text-white/90 italic mb-2">
+                "{TEAM_QUOTES[currentQuoteIndex].quote}"
+              </p>
+              <p className="text-base text-mcd-400">
+                — {TEAM_QUOTES[currentQuoteIndex].author}
+              </p>
+            </motion.div>
           </motion.div>
         </div>
 
         {/* Industry Partners - with glow pulse + float */}
         <div className="pb-10 px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1 }}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1 }}
             className="max-w-6xl mx-auto"
-          >
+        >
             <p className="text-center text-sm text-muted-foreground uppercase tracking-widest mb-6">
               Industry Partners
             </p>
             <div className="grid grid-cols-5 gap-10 items-center justify-items-center">
               {industryPartners.map((partner, idx) => (
-                <motion.div
-                  key={partner.name}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
+              <motion.div
+                key={partner.name}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 1.1 + idx * 0.1 }}
                   whileHover={{ scale: 1.1 }}
                   className={`group relative flex items-center justify-center animate-float-glow float-delay-${(idx % 5) + 1}`}
-                >
+              >
                   <img
                     src={partner.logoDark || partner.logo}
                     alt={partner.name}
                     className="h-16 w-auto max-w-[180px] object-contain relative z-10"
                   />
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
         </div>
 
         {/* Event Partners - with float animation */}
@@ -313,23 +283,27 @@ export function LobbyScreen() {
             <p className="text-center text-sm text-muted-foreground uppercase tracking-widest mb-5">
               Event Partners
             </p>
-            <div className="flex justify-center items-center gap-12 flex-wrap">
-              {eventPartners.map((partner, idx) => (
-                <motion.div
-                  key={partner.name}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 1.4 + idx * 0.05 }}
-                  whileHover={{ scale: 1.1 }}
-                  className={`group animate-float-subtle float-delay-${(idx % 6) + 1}`}
-                >
-                  <img
-                    src={partner.logo}
-                    alt={partner.name}
-                    className="h-12 w-auto object-contain opacity-80 group-hover:opacity-100 transition-all duration-300"
-                  />
-                </motion.div>
-              ))}
+            <div className="flex justify-center items-center gap-16 flex-wrap">
+              {eventPartners.map((partner, idx) => {
+                // Make Finimize, MCD Capital, and Wall Street Skinny logos much bigger
+                const isBiggerLogo = ['Finimize', 'MCD Capital', 'Wall Street Skinny'].includes(partner.name);
+                return (
+                  <motion.div
+                    key={partner.name}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1.4 + idx * 0.05 }}
+                    whileHover={{ scale: 1.1 }}
+                    className={`group animate-float-subtle float-delay-${(idx % 6) + 1}`}
+                  >
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      className={`${isBiggerLogo ? 'h-24' : 'h-16'} w-auto object-contain opacity-80 group-hover:opacity-100 transition-all duration-300`}
+                    />
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
         </div>
@@ -402,15 +376,15 @@ export function LobbyScreen() {
 
             <div className="flex justify-center">
               <div className="inline-flex items-center gap-4 px-8 py-3 bg-mcd-500/10 border border-mcd-500/30 rounded-full backdrop-blur-sm">
-                <motion.div
-                  className="w-3 h-3 bg-mcd-500 rounded-full"
-                  animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
+            <motion.div
+              className="w-3 h-3 bg-mcd-500 rounded-full"
+              animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
                 <span className="text-lg text-mcd-400">Event starting soon • Please take your seats</span>
               </div>
-            </div>
-          </motion.div>
+          </div>
+        </motion.div>
         </div>
 
       </div>

@@ -33,7 +33,6 @@ export function RoundScreen({ timer }: RoundScreenProps) {
   const [isShuffling, setIsShuffling] = useState(false);
   const [showLineup, setShowLineup] = useState(false);
   const [presentationPhase, setPresentationPhase] = useState<PresentationPhase>('intro');
-  const prevTimerStatus = useRef<string>('');
   const prevTeamId = useRef<string | null>(null);
 
   const animationState = state?.animationState;
@@ -103,51 +102,6 @@ export function RoundScreen({ timer }: RoundScreenProps) {
     }
   }, [animationState]);
 
-  useEffect(() => {
-    if (timer.status === 'completed' && prevTimerStatus.current === 'running') {
-      playAlarm();
-    }
-    prevTimerStatus.current = timer.status;
-  }, [timer.status]);
-
-  const playAlarm = () => {
-    try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const now = ctx.currentTime;
-      
-      const playBeep = (startTime: number, frequency: number) => {
-        const oscillator = ctx.createOscillator();
-        const gain = ctx.createGain();
-        oscillator.connect(gain);
-        gain.connect(ctx.destination);
-        oscillator.type = 'square';
-        oscillator.frequency.setValueAtTime(frequency, startTime);
-        gain.gain.setValueAtTime(0, startTime);
-        gain.gain.linearRampToValueAtTime(0.4, startTime + 0.02);
-        gain.gain.setValueAtTime(0.4, startTime + 0.15);
-        gain.gain.linearRampToValueAtTime(0, startTime + 0.2);
-        oscillator.start(startTime);
-        oscillator.stop(startTime + 0.25);
-      };
-      
-      playBeep(now, 880);
-      playBeep(now + 0.3, 988);
-      playBeep(now + 0.6, 1047);
-      
-      const finalOsc = ctx.createOscillator();
-      const finalGain = ctx.createGain();
-      finalOsc.connect(finalGain);
-      finalGain.connect(ctx.destination);
-      finalOsc.type = 'sawtooth';
-      finalOsc.frequency.setValueAtTime(440, now + 0.9);
-      finalGain.gain.setValueAtTime(0.5, now + 0.9);
-      finalGain.gain.exponentialRampToValueAtTime(0.01, now + 2);
-      finalOsc.start(now + 0.9);
-      finalOsc.stop(now + 2);
-    } catch (e) {
-      console.log('Audio not available');
-    }
-  };
 
   const completedTeams = state?.roundState?.teamsCompleted || [];
   const totalTeamsInRound = allTeams.length || 5;
@@ -174,16 +128,16 @@ export function RoundScreen({ timer }: RoundScreenProps) {
         {/* Round Header - Only show in intro phase or when no team */}
         <AnimatePresence>
           {(presentationPhase === 'intro' || !team) && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="text-center mb-4"
-            >
-              <h1 className="text-5xl font-display tracking-wider">
-                <span className="text-gradient">PITCHING ROUND {roundNumber}</span>
-              </h1>
-            </motion.div>
+          className="text-center mb-4"
+        >
+          <h1 className="text-5xl font-display tracking-wider">
+            <span className="text-gradient">PITCHING ROUND {roundNumber}</span>
+          </h1>
+        </motion.div>
           )}
         </AnimatePresence>
 
@@ -430,16 +384,6 @@ export function RoundScreen({ timer }: RoundScreenProps) {
                               {team.university}
                             </motion.p>
                             
-                            {team.strategyTagline && (
-                              <motion.p
-                                initial={{ y: 20, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                transition={{ delay: 0.6 }}
-                                className="text-lg text-muted-foreground italic border-l-2 border-mcd-500/50 pl-4"
-                              >
-                                "{team.strategyTagline}"
-                              </motion.p>
-                            )}
                           </div>
                         </div>
 
@@ -712,114 +656,114 @@ export function RoundScreen({ timer }: RoundScreenProps) {
 // Extracted Timer Panel component for reuse
 function TimerPanel({ timer }: { timer: RoundScreenProps['timer'] }) {
   return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 0.3, type: 'spring' }}
-        className={`bg-navy-800/50 backdrop-blur-xl border rounded-2xl p-6 text-center ${
-          timer.isCritical ? 'border-red-500/50' : timer.isWarning ? 'border-yellow-500/50' : 'border-mcd-500/20'
-        }`}
-      >
-        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4 ${
-          timer.type === 'qa' ? 'bg-cyan-500/20 text-cyan-400' : 'bg-mcd-500/20 text-mcd-400'
-        }`}>
-          {timer.type === 'qa' ? (
-            <>
-              <Mic className="w-4 h-4" />
-              <span className="font-medium">Q&A Session</span>
-            </>
-          ) : (
-            <>
-              <Clock className="w-4 h-4" />
-              <span className="font-medium">Presentation</span>
-            </>
-          )}
-        </div>
+                  <div className="space-y-6">
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.3, type: 'spring' }}
+                      className={`bg-navy-800/50 backdrop-blur-xl border rounded-2xl p-6 text-center ${
+                        timer.isCritical ? 'border-red-500/50' : timer.isWarning ? 'border-yellow-500/50' : 'border-mcd-500/20'
+                      }`}
+                    >
+                      <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4 ${
+                        timer.type === 'qa' ? 'bg-cyan-500/20 text-cyan-400' : 'bg-mcd-500/20 text-mcd-400'
+                      }`}>
+                        {timer.type === 'qa' ? (
+                          <>
+                            <Mic className="w-4 h-4" />
+                            <span className="font-medium">Q&A Session</span>
+                          </>
+                        ) : (
+                          <>
+                            <Clock className="w-4 h-4" />
+                            <span className="font-medium">Presentation</span>
+                          </>
+                        )}
+                      </div>
 
-        <div
-          className={`text-7xl font-mono font-bold tabular-nums mb-4 ${
-            timer.isCritical
-              ? 'text-red-500 animate-pulse'
-              : timer.isWarning
-              ? 'text-yellow-500'
-              : 'text-white'
-          }`}
-        >
-          {timer.formatted}
-        </div>
+                      <div
+                        className={`text-7xl font-mono font-bold tabular-nums mb-4 ${
+                          timer.isCritical
+                            ? 'text-red-500 animate-pulse'
+                            : timer.isWarning
+                            ? 'text-yellow-500'
+                            : 'text-white'
+                        }`}
+                      >
+                        {timer.formatted}
+                      </div>
 
-        {timer.status === 'paused' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500/20 text-yellow-500 rounded-full mb-4"
-          >
-            ⏸ PAUSED
-          </motion.div>
-        )}
+                      {timer.status === 'paused' && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500/20 text-yellow-500 rounded-full mb-4"
+                        >
+                          ⏸ PAUSED
+                        </motion.div>
+                      )}
 
-        {timer.status === 'completed' && (
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/20 text-red-500 rounded-full mb-4"
-          >
-            ⏱ TIME'S UP!
-          </motion.div>
-        )}
-        
-        <div className="relative w-36 h-36 mx-auto">
-          <svg className="w-full h-full -rotate-90">
-            <circle
-              cx="72"
-              cy="72"
-              r="66"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="6"
-              className="text-white/10"
-            />
-            <motion.circle
-              cx="72"
-              cy="72"
-              r="66"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="6"
-              strokeLinecap="round"
-              strokeDasharray={415}
-              strokeDashoffset={415 - (415 * timer.progress) / 100}
-              className={
-                timer.isCritical
-                  ? 'text-red-500'
-                  : timer.isWarning
-                  ? 'text-yellow-500'
-                  : 'text-mcd-500'
-              }
-            />
-          </svg>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-3xl font-bold">{Math.round(timer.progress)}%</span>
-          </div>
-        </div>
-      </motion.div>
+                      {timer.status === 'completed' && (
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/20 text-red-500 rounded-full mb-4"
+                        >
+                          ⏱ TIME'S UP!
+                        </motion.div>
+                      )}
+                      
+                      <div className="relative w-36 h-36 mx-auto">
+                        <svg className="w-full h-full -rotate-90">
+                          <circle
+                            cx="72"
+                            cy="72"
+                            r="66"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="6"
+                            className="text-white/10"
+                          />
+                          <motion.circle
+                            cx="72"
+                            cy="72"
+                            r="66"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="6"
+                            strokeLinecap="round"
+                            strokeDasharray={415}
+                            strokeDashoffset={415 - (415 * timer.progress) / 100}
+                            className={
+                              timer.isCritical
+                                ? 'text-red-500'
+                                : timer.isWarning
+                                ? 'text-yellow-500'
+                                : 'text-mcd-500'
+                            }
+                          />
+                        </svg>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="text-3xl font-bold">{Math.round(timer.progress)}%</span>
+                        </div>
+                      </div>
+                    </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="bg-white/5 rounded-xl p-4"
-      >
-        <div className="flex items-center justify-between text-sm mb-2">
-          <span className="text-muted-foreground">Presentation</span>
-          <span className="font-mono">6:00</span>
-        </div>
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Q&A</span>
-          <span className="font-mono">4:00</span>
-        </div>
-      </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                      className="bg-white/5 rounded-xl p-4"
+                    >
+                      <div className="flex items-center justify-between text-sm mb-2">
+                        <span className="text-muted-foreground">Presentation</span>
+                        <span className="font-mono">6:00</span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Q&A</span>
+                        <span className="font-mono">4:00</span>
+                      </div>
+                    </motion.div>
     </div>
   );
 }
