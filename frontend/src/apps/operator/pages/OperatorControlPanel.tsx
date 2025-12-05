@@ -344,11 +344,11 @@ export function OperatorControlPanel({ eventId, onLogout }: OperatorControlPanel
             </Button>
             <div className="flex items-center gap-1">
               <a href={audienceLink} target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="sm">
-                  <Eye className="w-4 h-4 mr-2" />
-                  Audience
-                </Button>
-              </a>
+              <Button variant="outline" size="sm">
+                <Eye className="w-4 h-4 mr-2" />
+                Audience
+              </Button>
+            </a>
               <Button 
                 variant="outline" 
                 size="sm" 

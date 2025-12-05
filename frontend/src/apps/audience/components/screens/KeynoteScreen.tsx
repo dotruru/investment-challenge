@@ -69,7 +69,8 @@ export function KeynoteScreen() {
   useEffect(() => {
     const loadSpeakers = async () => {
       try {
-        const response = await fetch(`/api/v1/events/${eventId}/display`);
+        const apiUrl = import.meta.env.VITE_API_URL || '/api/v1';
+        const response = await fetch(`${apiUrl}/events/${eventId}/display`);
         const data = await response.json();
         const speakerProfiles = (data.profiles || []).filter(
           (p: PersonProfile) => p.profileType === 'SPEAKER'
